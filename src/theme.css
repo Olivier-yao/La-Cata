@@ -1,0 +1,194 @@
+/* theme.css — Identité visuelle "La Cata"
+   Aubergine profond, contours noirs durs, ombres portées sans flou.
+   Palette et échelles alignées sur le kit de design (DESIGN KIT · LA CATA) :
+   magenta = action/lecture, citron-vert = validation, jaune = tirage/attente,
+   violet = fonds secondaires/jauges, cyan = information confidentielle. */
+
+:root {
+  --bg-deep: #1A1425;
+  --bg-panel: #241B2F;
+  --bg-panel-raised: #33264A;
+  --outline: #120C1B;
+  --border-soft: #3B2C50;
+
+  --text-primary: #F6ECFF;
+  --text-muted: #C9B9DC;
+  --text-dim: #6B5A82;
+
+  --accent-magenta: #FF4D8D;
+  --accent-lime: #C8FF4D;
+  --accent-yellow: #FFC94D;
+  --accent-violet: #7C4DFF;
+  --accent-cyan: #4DE8FF;
+  --danger: #FF4D8D;
+
+  --font-display: 'Bungee', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  --shadow-hard-sm: 5px 5px 0 var(--outline);
+  --shadow-hard: 8px 8px 0 var(--outline);
+  --shadow-hard-lg: 10px 10px 0 var(--outline);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+@keyframes lc-band {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200,255,77,.55), inset 0 0 40px rgba(200,255,77,.12); }
+  50% { box-shadow: 0 0 0 12px rgba(200,255,77,0), inset 0 0 70px rgba(200,255,77,.28); }
+}
+@keyframes lc-bandpink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,141,.6), inset 0 0 40px rgba(255,77,141,.1); }
+  50% { box-shadow: 0 0 0 14px rgba(255,77,141,0), inset 0 0 80px rgba(255,77,141,.3); }
+}
+@keyframes lc-stripes { from { background-position: 0 0; } to { background-position: 120px 0; } }
+@keyframes lc-shake {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  20% { transform: translate(-6px,3px) rotate(-1.4deg); }
+  40% { transform: translate(5px,-4px) rotate(1.2deg); }
+  60% { transform: translate(-4px,-2px) rotate(-.8deg); }
+  80% { transform: translate(6px,2px) rotate(1deg); }
+}
+@keyframes lc-tick { 0% { transform: scale(1.14); } 30% { transform: scale(1); } 100% { transform: scale(1); } }
+@keyframes lc-float { from { transform: translateY(0) rotate(0deg); } to { transform: translateY(-26px) rotate(14deg); } }
+@keyframes lc-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .15; } }
+@keyframes lc-spin { to { transform: rotate(360deg); } }
+@keyframes lc-wobble { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes lc-pop { 0% { transform: scale(1.06) rotate(-2deg); } 55%, 100% { transform: scale(1) rotate(-2deg); } }
+@keyframes lc-wave { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+@keyframes lc-loop { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+@keyframes lc-pulse-ring { 0%, 100% { box-shadow: 0 0 0 6px rgba(255,255,255,.08); } 50% { box-shadow: 0 0 0 14px rgba(255,255,255,0); } }
+
+.eyebrow {
+  font-family: var(--font-display);
+  color: var(--accent-magenta);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+}
+
+.display-title {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  background: var(--bg-panel);
+  border: 3px solid var(--outline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-hard-lg);
+  overflow: hidden;
+}
+
+.stripes-bg {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(115deg, rgba(255,77,141,.1) 0 30px, transparent 30px 60px);
+  animation: lc-stripes 5s linear infinite;
+  pointer-events: none;
+}
+
+.hard-card {
+  background: var(--bg-panel);
+  border: 3px solid var(--outline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hard);
+  padding: 26px;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.btn {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  border: 3px solid var(--outline);
+  border-radius: var(--radius-pill);
+  padding: 14px 28px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--text-primary);
+  background: var(--bg-panel-raised);
+  box-shadow: var(--shadow-hard-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 var(--outline);
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--outline);
+}
+
+.btn:disabled {
+  background: var(--bg-panel-raised);
+  color: var(--text-dim);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: .7;
+}
+
+.btn-primary { background: var(--accent-magenta); color: var(--outline); }
+.btn-lime { background: var(--accent-lime); color: var(--outline); }
+.btn-yellow { background: var(--accent-yellow); color: var(--outline); }
+.btn-violet { background: var(--accent-violet); color: var(--text-primary); }
+.btn-cyan { background: var(--accent-cyan); color: var(--outline); }
+.btn-secondary { background: var(--bg-panel-raised); color: var(--text-primary); }
+
+.tag {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-panel-raised);
+  border: 2px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tag-active {
+  background: var(--accent-yellow);
+  color: var(--outline);
+  border-color: var(--outline);
+  font-weight: 700;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  color: var(--outline);
+  flex: 0 0 auto;
+}
