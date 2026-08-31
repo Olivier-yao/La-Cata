@@ -11,7 +11,9 @@ import VoteGraduee from '../components/vote/VoteGraduee.jsx';
 import VoteGradueeMultiple from '../components/vote/VoteGradueeMultiple.jsx';
 import VoteGradueeRemoteHost from '../components/vote/VoteGradueeRemoteHost.jsx';
 import VoteBinaire from '../components/vote/VoteBinaire.jsx';
+import VoteBinaireRemoteHost from '../components/vote/VoteBinaireRemoteHost.jsx';
 import VoteVraiFaux from '../components/vote/VoteVraiFaux.jsx';
+import VoteVraiFauxRemoteHost from '../components/vote/VoteVraiFauxRemoteHost.jsx';
 
 import VirelangueExpress from '../games/VirelangueExpress.jsx';
 import AccentSurprise from '../games/AccentSurprise.jsx';
@@ -452,18 +454,48 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
     }
     if (jeuCourant.voteType === 'binaire') {
       const estProces = jeuCourant.id === 'proces-fictif';
+      const question = estProces ? 'Le verdict de la table ?' : `${joueurActuel} a-t-il/elle craqué ?`;
+      const optionA = estProces ? { label: 'Non coupable', points: 4 } : { label: 'Tenu jusqu\'au bout', points: 4 };
+      const optionB = estProces ? { label: 'Coupable', points: 1 } : { label: 'A craqué', points: 0 };
+      if (remote.actif && remote.nbConnectes > 0) {
+        return (
+          <div className="stage">
+            <VoteBinaireRemoteHost
+              question={question}
+              optionA={optionA}
+              optionB={optionB}
+              joueurs={joueurs}
+              connectes={remote.connectes}
+              votesRecus={remote.votesRecus}
+              onDemarrerVote={remote.demarrerVote}
+              onVote={onVoteGenerique}
+            />
+          </div>
+        );
+      }
       return (
         <div className="stage">
-          <VoteBinaire
-            question={estProces ? 'Le verdict de la table ?' : `${joueurActuel} a-t-il/elle craqué ?`}
-            optionA={estProces ? { label: 'Non coupable', points: 4 } : { label: 'Tenu jusqu\'au bout', points: 4 }}
-            optionB={estProces ? { label: 'Coupable', points: 1 } : { label: 'A craqué', points: 0 }}
-            onVote={onVoteGenerique}
-          />
+          <VoteBinaire question={question} optionA={optionA} optionB={optionB} onVote={onVoteGenerique} />
         </div>
       );
     }
     if (jeuCourant.voteType === 'vraifaux') {
+      if (remote.actif && remote.nbConnectes > 0) {
+        return (
+          <div className="stage">
+            <VoteVraiFauxRemoteHost
+              joueurActuel={joueurActuel}
+              affirmation={donneesManche?.affirmation}
+              estVraie={donneesManche?.vrai}
+              joueurs={joueurs}
+              connectes={remote.connectes}
+              votesRecus={remote.votesRecus}
+              onDemarrerVote={remote.demarrerVote}
+              onTermine={appliquerPoints}
+            />
+          </div>
+        );
+      }
       return (
         <div className="stage">
           <VoteVraiFaux

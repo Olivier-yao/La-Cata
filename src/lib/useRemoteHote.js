@@ -82,9 +82,9 @@ export function useRemoteHote(joueurs, { onNouveauJoueur } = {}) {
     setOrdreActions([]);
   };
 
-  const demarrerVote = (question) => {
+  const demarrerVote = (question, options) => {
     setVotesRecus({});
-    connexionRef.current && connexionRef.current.envoyer({ type: 'vote-start', question });
+    connexionRef.current && connexionRef.current.envoyer({ type: 'vote-start', question, options });
   };
 
   // Pour l'écran "en attente" des manettes : qui joue, à quoi, et où j'en

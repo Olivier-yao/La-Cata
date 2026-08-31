@@ -135,7 +135,7 @@ wss.on('connection', (ws) => {
     if (msg.type === 'vote-start' && ws.role === 'host') {
       const salle = obtenirSalle(ws.code);
       for (const joueurWs of salle.joueursConnectes.values()) {
-        envoyer(joueurWs, { type: 'vote-start', question: msg.question });
+        envoyer(joueurWs, { type: 'vote-start', question: msg.question, options: msg.options });
       }
       return;
     }

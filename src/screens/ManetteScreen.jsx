@@ -14,7 +14,7 @@ function paramsUrl() {
   return { code: (p.get('code') || '').toUpperCase() };
 }
 
-const CARTES = [
+const CARTES_DEFAUT = [
   { points: 1, titre: 'La Cata' },
   { points: 3, titre: 'Correct' },
   { points: 6, titre: 'Légendaire' },
@@ -27,6 +27,7 @@ export default function ManetteScreen() {
   const [erreur, setErreur] = useState('');
   const [index, setIndex] = useState(0);
   const [question, setQuestion] = useState('');
+  const [optionsVote, setOptionsVote] = useState(null);
   const [contexte, setContexte] = useState(null); // { jeu, joueur }
   const [scores, setScores] = useState({});
   const [actionPayload, setActionPayload] = useState(null);
@@ -57,6 +58,7 @@ export default function ManetteScreen() {
     });
     conn.sur('vote-start', (msg) => {
       setQuestion(msg.question || '');
+      setOptionsVote(msg.options && msg.options.length ? msg.options : null);
       setPhase('vote');
     });
     conn.sur('host-left', () => setPhase('hote-parti'));
@@ -154,13 +156,13 @@ export default function ManetteScreen() {
           <div className="display-title" style={{ fontSize: 'clamp(20px, 6vw, 28px)', color: couleur.fg, marginTop: 8 }}>{question || `C'était comment ?`}</div>
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
-          {CARTES.map((c) => (
+          {(optionsVote || CARTES_DEFAUT).map((c, i) => (
             <button
-              key={c.points}
+              key={i}
               onClick={() => voter(c.points)}
               style={{ background: 'var(--outline)', color: 'var(--text-primary)', border: '4px solid var(--outline)', borderRadius: 24, padding: '28px', display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              <span className="display-title" style={{ fontSize: 24 }}>{c.titre}</span>
+              <span className="display-title" style={{ fontSize: 24 }}>{c.label || c.titre}</span>
               <span className="display-title" style={{ fontSize: 18, opacity: 0.7 }}>+{c.points}</span>
             </button>
           ))}

@@ -77,6 +77,45 @@ body {
 @keyframes lc-loop { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 @keyframes lc-pulse-ring { 0%, 100% { box-shadow: 0 0 0 6px rgba(255,255,255,.08); } 50% { box-shadow: 0 0 0 14px rgba(255,255,255,0); } }
 
+/* Animation de lancement (splash → bascule → premier joueur), voir
+   HomeScreen.jsx et PlayerSetup.jsx — timings repris tels quels du kit
+   de design "Manette Party". */
+@keyframes lc-logoin {
+  0% { transform: scale(1.6) translateY(-40px); opacity: 0; }
+  42% { transform: scale(.94) translateY(0); opacity: 1; }
+  62% { transform: scale(1.04); }
+  78%, 100% { transform: scale(1); }
+}
+@keyframes lc-shadowin {
+  0%, 30% { text-shadow: 0 0 0 var(--accent-magenta), 0 0 0 var(--outline); }
+  60%, 100% { text-shadow: 10px 10px 0 var(--accent-magenta), 20px 20px 0 var(--outline); }
+}
+@keyframes lc-fall {
+  0% { transform: translateY(-90px) rotate(0deg); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: translateY(30px) rotate(220deg); opacity: 1; }
+}
+@keyframes lc-logout { to { transform: translateY(-120%); opacity: 0; } }
+@keyframes lc-panelin { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes lc-qrreveal { 0% { clip-path: inset(0 0 100% 0); opacity: 0; } 12% { opacity: 1; } 70%, 100% { clip-path: inset(0 0 0 0); opacity: 1; } }
+@keyframes lc-halo { 0%, 100% { box-shadow: 0 0 0 0 rgba(77,232,255,.55); } 50% { box-shadow: 0 0 0 18px rgba(77,232,255,0); } }
+@keyframes lc-phonebob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 30% { transform: translateY(-10px) rotate(4deg); } 60% { transform: translateY(0) rotate(-2deg); } }
+@keyframes lc-arrow { 0%, 100% { transform: translateX(0); opacity: .5; } 50% { transform: translateX(12px); opacity: 1; } }
+@keyframes lc-letterin { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes lc-land {
+  0% { transform: translateY(-70px) scale(.8); opacity: 0; }
+  45% { transform: translateY(0) scale(1.08); opacity: 1; }
+  62% { transform: translateY(-6px) scale(.98); }
+  78% { transform: translateY(0) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes lc-pip { 0% { opacity: 1; transform: scale(1); } 40% { transform: scale(1.5); } 100% { opacity: 1; transform: scale(1); } }
+
+/* Écran "Choisis le mini-jeu" : entrée en cascade des familles et des
+   cartes, voir GameSelectScreen.jsx. */
+@keyframes lc-rowin { from { transform: translateX(-14px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes lc-cardin { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
 .eyebrow {
   font-family: var(--font-display);
   color: var(--accent-magenta);

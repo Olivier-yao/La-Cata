@@ -83,7 +83,7 @@ function LigneJeuCompacte({ jeu, onClick }) {
 function VueFamilles({ familleOuverte, setFamilleOuverte, onChoisir }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {FAMILLES.map((famille) => {
+      {FAMILLES.map((famille, index) => {
         const jeux = jeuxDeFamille(famille.id);
         const ouverte = familleOuverte === famille.id;
         return (
@@ -94,9 +94,16 @@ function VueFamilles({ familleOuverte, setFamilleOuverte, onChoisir }) {
                 display: 'flex', alignItems: 'center', gap: 12, background: ouverte ? famille.couleur : 'var(--bg-panel-raised)',
                 border: '3px solid var(--outline)', borderRadius: 18, padding: '14px 16px', cursor: 'pointer', fontFamily: 'inherit',
                 boxShadow: ouverte ? 'var(--shadow-hard-sm)' : 'none', minHeight: 56,
+                animation: `lc-rowin 280ms ease-out ${index * 60}ms both`,
               }}
             >
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: ouverte ? 'var(--outline)' : famille.couleur, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto' }}>
+              <div
+                style={{
+                  width: 30, height: 30, borderRadius: 8, background: ouverte ? 'var(--outline)' : famille.couleur,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
+                  animation: ouverte ? 'none' : 'lc-pulse-ring 2.6s ease-in-out infinite',
+                }}
+              >
                 <famille.Icone color={ouverte ? famille.couleur : 'var(--outline)'} size={17} />
               </div>
               <span className="display-title" style={{ flex: 1, fontSize: 15, color: ouverte ? 'var(--outline)' : 'var(--text-primary)', textAlign: 'left' }}>{famille.nom.toUpperCase()}</span>
@@ -105,8 +112,10 @@ function VueFamilles({ familleOuverte, setFamilleOuverte, onChoisir }) {
             </button>
             {ouverte && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10, padding: '2px 4px 6px' }}>
-                {jeux.map((jeu) => (
-                  <CarteJeu key={jeu.id} jeu={jeu} onClick={() => onChoisir(jeu)} />
+                {jeux.map((jeu, i) => (
+                  <div key={jeu.id} style={{ animation: `lc-cardin 220ms ease-out ${i * 30}ms both` }}>
+                    <CarteJeu jeu={jeu} onClick={() => onChoisir(jeu)} />
+                  </div>
                 ))}
               </div>
             )}
