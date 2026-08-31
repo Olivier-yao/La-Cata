@@ -1,5 +1,5 @@
 // melanger.js — mélange Fisher-Yates, utilisé partout où il faut tirer un
-// sous-groupe de joueurs au hasard (Conversation, Improvisation).
+// sous-groupe de joueurs au hasard (Conversation, Speed Dating Improbable).
 
 export function melanger(liste) {
   const copie = [...liste];

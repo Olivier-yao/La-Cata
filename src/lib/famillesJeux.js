@@ -2,7 +2,6 @@ import {
   IconChrono,
   IconGroupe as IconGroupeFamille,
   IconDetective,
-  IconStatue,
   IconManetteFamille,
 } from '../components/icons.jsx';
 
@@ -16,18 +15,13 @@ export const FAMILLES = [
   { id: 'chrono-solo', nom: 'Chrono solo', sousTitre: 'un joueur à la fois', Icone: IconChrono, couleur: 'var(--accent-lime)' },
   { id: 'en-groupe', nom: 'En groupe', sousTitre: 'plusieurs joueurs à la fois', Icone: IconGroupeFamille, couleur: 'var(--accent-violet)' },
   { id: 'deduction-vote', nom: 'Déduction & vote', sousTitre: 'deviner, voter, trancher', Icone: IconDetective, couleur: 'var(--accent-magenta)' },
-  { id: 'corps-mouvement', nom: 'Corps & mouvement', sousTitre: 'ça se lève, ça bouge', Icone: IconStatue, couleur: 'var(--accent-cyan)' },
   { id: 'manette-party', nom: 'Manette Party', sousTitre: 'avec les téléphones connectés', Icone: IconManetteFamille, couleur: 'var(--accent-cyan)' },
 ];
 
 export const FAMILLE_PAR_JEU = {
   'virelangue-express': 'chrono-solo',
-  'accent-surprise': 'chrono-solo',
-  'defi-chrono-absurde': 'chrono-solo',
   'calcul-eclair': 'chrono-solo',
-  'alphabet-express': 'chrono-solo',
   'emission-tele-achat': 'chrono-solo',
-  'chant-impose': 'chrono-solo',
   'memoire-flash': 'chrono-solo',
   'texte-corse': 'chrono-solo',
   'improvisation-titre': 'chrono-solo',
@@ -35,25 +29,13 @@ export const FAMILLE_PAR_JEU = {
   'texto-sous-pression': 'chrono-solo',
 
   'conversation': 'en-groupe',
-  'improvisation': 'en-groupe',
   'histoire-plusieurs-voix': 'en-groupe',
   'proces-fictif': 'en-groupe',
   'speed-dating-improbable': 'en-groupe',
   'mot-surprise': 'en-groupe',
-  'memoire-groupe': 'en-groupe',
   'categories-chrono': 'en-groupe',
-  'association-chaine': 'en-groupe',
 
-  'le-menteur': 'deduction-vote',
-  'sondage-predictif': 'deduction-vote',
-  'le-detective': 'deduction-vote',
   'evasion-express': 'deduction-vote',
-  'sans-rire': 'deduction-vote',
-
-  'statue-surprise': 'corps-mouvement',
-  'dessine-a-laveugle': 'corps-mouvement',
-  'devine-le-bruit': 'corps-mouvement',
-  'doublage-sauvage': 'corps-mouvement',
 
   'duel-buzzer': 'manette-party',
   'vision-floue': 'manette-party',
@@ -89,8 +71,6 @@ export const BADGE_JOUEURS = {
   'proces-fictif': '3+',
   'speed-dating-improbable': '2',
   'mot-surprise': '2+',
-  'memoire-groupe': '2+',
-  'le-detective': '3+',
 };
 
 export function familleDuJeu(jeuId) {

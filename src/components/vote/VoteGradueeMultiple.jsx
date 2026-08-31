@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import VoteGraduee from './VoteGraduee.jsx';
 
 // VoteGradueeMultiple — pour les mini-jeux collectifs (Conversation,
-// Improvisation, Mot Surprise) : chacun n'a pas forcément la même
+// Histoire à Plusieurs Voix, Mot Surprise) : chacun n'a pas forcément la même
 // performance, donc on fait défiler un vote par joueur du cast plutôt que
 // de donner les mêmes points à tout le monde d'un seul coup.
 

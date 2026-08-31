@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // effacé entre deux tours (Cadavre Exquis Numérique). Le tracé de chacun
 // arrive via `remote.actionsRecues[artiste]`, un point à la fois.
 
-export default function DessinHost({ remote, dureeParTour = 18, consigne, onTermine }) {
+export default function DessinHost({ remote, dureeParTour = 18, consigne, nbArtistes, onTermine }) {
   const [etape, setEtape] = useState('avant'); // avant | tour | fin
   const [ordre, setOrdre] = useState([]);
   const [tourIndex, setTourIndex] = useState(0);
@@ -30,7 +30,12 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, onTerm
   };
 
   const demarrer = () => {
-    const liste = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
+    let liste = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
+    if (nbArtistes && nbArtistes < liste.length) {
+      // Tire nbArtistes noms au hasard plutôt que tout le monde — pour un
+      // duel de dessin ou un artiste unique désigné (Dessine et Devine).
+      liste = [...liste].sort(() => Math.random() - 0.5).slice(0, nbArtistes);
+    }
     const ctx = canvasRef.current?.getContext('2d');
     if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     setOrdre(liste);

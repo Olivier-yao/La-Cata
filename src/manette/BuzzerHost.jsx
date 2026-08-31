@@ -7,30 +7,38 @@ import React, { useEffect, useRef, useState } from 'react';
 // `enfants` permet d'insérer un contenu spécifique au jeu (image floutée,
 // question...) entre la consigne et le bouton/statut du buzzer.
 
-export default function BuzzerHost({ remote, consigne, enfants, pointsGagnant = 6, boutonLabel = 'Ouvrir les buzzers', demanderJugement = false, onTermine }) {
+export default function BuzzerHost({ remote, consigne, enfants, pointsGagnant = 6, boutonLabel = 'Ouvrir les buzzers', demanderJugement = false, perdant = false, joueursEligibles, onTermine }) {
   const [etape, setEtape] = useState('avant'); // avant | ouvert | resultat
   const [gagnant, setGagnant] = useState(null);
   const idRef = useRef(0);
+
+  const nomsConnectes = (joueursEligibles || remote.connectes.filter((j) => j.connecte).map((j) => j.nom));
 
   const demarrer = () => {
     remote.resetActions();
     idRef.current = Date.now();
     setGagnant(null);
     setEtape('ouvert');
-    remote.envoyerAction({ prim: 'buzzer', etape: 'ouvert', consigne, id: idRef.current });
+    const payload = { prim: 'buzzer', etape: 'ouvert', consigne, id: idRef.current };
+    if (joueursEligibles) {
+      // Duel restreint : seuls les téléphones concernés reçoivent le
+      // signal, les autres restent sur leur écran d'attente habituel.
+      remote.envoyerActionPrivee(Object.fromEntries(joueursEligibles.map((n) => [n, payload])));
+    } else {
+      remote.envoyerAction(payload);
+    }
   };
 
   useEffect(() => {
-    if (etape === 'ouvert' && remote.ordreActions.length > 0) {
-      const nom = remote.ordreActions[0];
+    const ordreFiltre = remote.ordreActions.filter((n) => nomsConnectes.includes(n));
+    if (etape === 'ouvert' && ordreFiltre.length > 0) {
+      const nom = ordreFiltre[0];
       setGagnant(nom);
       setEtape('resultat');
       remote.envoyerAction({ prim: 'buzzer', etape: 'resultat', gagnant: nom, id: idRef.current });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remote.ordreActions, etape]);
-
-  const nomsConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '44px 24px', textAlign: 'center' }}>
@@ -50,7 +58,20 @@ export default function BuzzerHost({ remote, consigne, enfants, pointsGagnant = 
         </>
       )}
 
-      {etape === 'resultat' && demanderJugement && (
+      {etape === 'resultat' && perdant && (
+        <>
+          <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-magenta)' }}>{gagnant} a buzzé en premier… et perd la manche !</div>
+          <button
+            className="btn btn-lime"
+            style={{ fontSize: 18, padding: '16px 36px' }}
+            onClick={() => onTermine(Object.fromEntries(nomsConnectes.map((n) => [n, n === gagnant ? 0 : pointsGagnant])))}
+          >
+            Valider
+          </button>
+        </>
+      )}
+
+      {etape === 'resultat' && !perdant && demanderJugement && (
         <>
           <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-lime)' }}>{gagnant} a buzzé en premier !</div>
           <p style={{ color: 'var(--text-muted)' }}>A répondu juste à voix haute ?</p>
@@ -65,7 +86,7 @@ export default function BuzzerHost({ remote, consigne, enfants, pointsGagnant = 
         </>
       )}
 
-      {etape === 'resultat' && !demanderJugement && (
+      {etape === 'resultat' && !perdant && !demanderJugement && (
         <>
           <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-lime)' }}>{gagnant} a buzzé en premier !</div>
           <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={() => onTermine({ [gagnant]: pointsGagnant })}>

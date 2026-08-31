@@ -16,28 +16,13 @@ import VoteVraiFaux from '../components/vote/VoteVraiFaux.jsx';
 import VoteVraiFauxRemoteHost from '../components/vote/VoteVraiFauxRemoteHost.jsx';
 
 import VirelangueExpress from '../games/VirelangueExpress.jsx';
-import AccentSurprise from '../games/AccentSurprise.jsx';
-import SansRire from '../games/SansRire.jsx';
-import DefiChronoAbsurde from '../games/DefiChronoAbsurde.jsx';
-import DoublageSauvage from '../games/DoublageSauvage.jsx';
-import DevineLeBruit from '../games/DevineLeBruit.jsx';
-import ChantImpose from '../games/ChantImpose.jsx';
-import DessineAlAveugle from '../games/DessineAlAveugle.jsx';
-import LeMenteur from '../games/LeMenteur.jsx';
-import StatueSurprise from '../games/StatueSurprise.jsx';
 import Conversation from '../games/Conversation.jsx';
 import MemoireFlash from '../games/MemoireFlash.jsx';
-import Improvisation from '../games/Improvisation.jsx';
 import CalculEclair from '../games/CalculEclair.jsx';
 import TexteCorse from '../games/TexteCorse.jsx';
 import MotSurprise from '../games/MotSurprise.jsx';
 import ImprovisationTitre from '../games/ImprovisationTitre.jsx';
-import AlphabetExpress from '../games/AlphabetExpress.jsx';
-import MemoireDeGroupe from '../games/MemoireDeGroupe.jsx';
-import SondagePredictif from '../games/SondagePredictif.jsx';
-import LeDetective from '../games/LeDetective.jsx';
 import CategoriesChrono from '../games/CategoriesChrono.jsx';
-import AssociationChaine from '../games/AssociationChaine.jsx';
 import HistoirePlusieursVoix from '../games/HistoirePlusieursVoix.jsx';
 import SpeedDatingImprobable from '../games/SpeedDatingImprobable.jsx';
 import ProcesFictif from '../games/ProcesFictif.jsx';
@@ -68,28 +53,13 @@ import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
-  'accent-surprise': AccentSurprise,
-  'sans-rire': SansRire,
-  'defi-chrono-absurde': DefiChronoAbsurde,
-  'doublage-sauvage': DoublageSauvage,
-  'devine-le-bruit': DevineLeBruit,
-  'chant-impose': ChantImpose,
-  'dessine-a-laveugle': DessineAlAveugle,
-  'le-menteur': LeMenteur,
-  'statue-surprise': StatueSurprise,
   'conversation': Conversation,
   'memoire-flash': MemoireFlash,
-  'improvisation': Improvisation,
   'calcul-eclair': CalculEclair,
   'texte-corse': TexteCorse,
   'mot-surprise': MotSurprise,
   'improvisation-titre': ImprovisationTitre,
-  'alphabet-express': AlphabetExpress,
-  'memoire-groupe': MemoireDeGroupe,
-  'sondage-predictif': SondagePredictif,
-  'le-detective': LeDetective,
   'categories-chrono': CategoriesChrono,
-  'association-chaine': AssociationChaine,
   'histoire-plusieurs-voix': HistoirePlusieursVoix,
   'speed-dating-improbable': SpeedDatingImprobable,
   'proces-fictif': ProcesFictif,
@@ -121,7 +91,7 @@ const COMPOSANTS_PAR_JEU = {
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement
 // (voir onTermine({ cast })) — chacun n'a pas forcément la même performance.
-const JEUX_SCORE_COLLECTIF = ['conversation', 'improvisation', 'mot-surprise', 'histoire-plusieurs-voix'];
+const JEUX_SCORE_COLLECTIF = ['conversation', 'mot-surprise', 'histoire-plusieurs-voix'];
 
 // Mini-jeux "groupe" où tout le cast reçoit le même verdict (Speed Dating :
 // l'alchimie se juge à deux ; Procès Fictif : le verdict s'applique à

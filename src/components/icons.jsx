@@ -14,25 +14,6 @@ export function IconVirelangue({ color = '#241B2F', size = 26 }) {
   );
 }
 
-export function IconAccent({ color = '#241B2F', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <path d="M5 7h22v15H15l-7 5v-5H5z" stroke={color} strokeWidth="3.4" strokeLinejoin="round" />
-      <path d="M12 14h.01M16 14h.01M20 14h.01" stroke={color} strokeWidth="4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function IconSansRire({ color = '#241B2F', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <circle cx="16" cy="16" r="12" stroke={color} strokeWidth="3.4" />
-      <path d="M11 21h10" stroke={color} strokeWidth="3.4" strokeLinecap="round" />
-      <path d="M11 12l2.5 2.5M13.5 12L11 14.5M18.5 12l2.5 2.5M21 12l-2.5 2.5" stroke={color} strokeWidth="3" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function IconChrono({ color = '#241B2F', size = 26 }) {
   return (
     <svg {...base} width={size} height={size}>
@@ -52,24 +33,6 @@ export function IconDoublage({ color = '#241B2F', size = 26 }) {
   );
 }
 
-export function IconBruit({ color = '#C8FF4D', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <path d="M5 16v2M10 11v10M15 6v20M20 11v10M25 15v3" stroke={color} strokeWidth="3.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function IconChant({ color = '#FFC94D', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <path d="M13 23V6l12-2v17" stroke={color} strokeWidth="3.4" strokeLinejoin="round" />
-      <circle cx="9" cy="23" r="4" stroke={color} strokeWidth="3.4" />
-      <circle cx="21" cy="21" r="4" stroke={color} strokeWidth="3.4" />
-    </svg>
-  );
-}
-
 export function IconAveugle({ color = '#4DE8FF', size = 26 }) {
   return (
     <svg {...base} width={size} height={size}>
@@ -85,15 +48,6 @@ export function IconMenteur({ color = '#FF4D8D', size = 26 }) {
       <path d="M5 6h22v15H15l-7 5v-5H5z" stroke={color} strokeWidth="3.2" strokeLinejoin="round" />
       <path d="M11 10l6 6M17 10l-6 6" stroke={color} strokeWidth="3" strokeLinecap="round" />
       <path d="M19 14l2.5 2.5L26 11" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-export function IconStatue({ color = '#7C4DFF', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <circle cx="16" cy="6" r="3.4" stroke={color} strokeWidth="3" />
-      <path d="M16 10v9M16 19l-5 8M16 19l5 8M7 13l9 2 9-2" stroke={color} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -130,15 +84,6 @@ export function IconCalcul({ color = '#241B2F', size = 26 }) {
     <svg {...base} width={size} height={size}>
       <rect x="5" y="5" width="22" height="22" rx="5" stroke={color} strokeWidth="3" />
       <path d="M9.5 13c1.6-2.2 3.2-2.2 4.8 0s3.2 2.2 4.8 0M9.5 20c1.6-2.2 3.2-2.2 4.8 0s3.2 2.2 4.8 0" stroke={color} strokeWidth="2.6" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function IconSondage({ color = '#241B2F', size = 26 }) {
-  return (
-    <svg {...base} width={size} height={size}>
-      <path d="M5 27V13M14 27V6M23 27v-9" stroke={color} strokeWidth="4" strokeLinecap="round" />
-      <path d="M4 27h24" stroke={color} strokeWidth="3.2" strokeLinecap="round" />
     </svg>
   );
 }
