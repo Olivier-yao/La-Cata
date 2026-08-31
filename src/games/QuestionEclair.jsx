@@ -11,15 +11,16 @@ export default function QuestionEclair({ manche, remote, onTermine }) {
       <RoundHeader icone={<IconBuzzer color="var(--outline)" />} iconBg="var(--accent-yellow)" titre="Question Éclair" sousTitre={`Manche ${manche}`} couleurTitre="var(--accent-yellow)" />
       <BuzzerHost
         remote={remote}
-        consigne="Écoute la question lue à voix haute, buzz dès que tu as la réponse."
+        auto
+        consigne="Lisez la question ensemble. Premier qui buzz répond sur son téléphone, avec un temps réduit."
         enfants={(
           <div className="hard-card" style={{ maxWidth: 540, textAlign: 'center' }}>
             <div style={{ fontSize: 19 }}>{q.question}</div>
-            <div style={{ fontSize: 13, color: 'var(--text-dim)', marginTop: 10 }}>Réponse : {q.options[q.bonneReponse]}</div>
           </div>
         )}
-        boutonLabel="Ouvrir les buzzers"
-        demanderJugement
+        options={q.options}
+        bonneReponse={q.bonneReponse}
+        dureeReponse={7}
         onTermine={(scores) => onTermine({ scores })}
       />
     </div>
