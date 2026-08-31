@@ -106,6 +106,8 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
   const [joueursRestants, setJoueursRestants] = useState([]);
   const [joueurActuel, setJoueurActuel] = useState(null);
   const [mancheNumero, setMancheNumero] = useState(1);
+  const [manchesRestantesMemeJeu, setManchesRestantesMemeJeu] = useState(1);
+  const [manchesTotalMemeJeu, setManchesTotalMemeJeu] = useState(1);
   const [scores, setScores] = useState(() => Object.fromEntries(joueurs.map((j) => [j, 0])));
   const [phase, setPhase] = useState('choix-jeu'); // choix-jeu | regles | choix-joueur | jeu | vote | scores | podium
   const [donneesManche, setDonneesManche] = useState(null);
@@ -138,10 +140,12 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
     setPhase('regles');
   };
 
-  const demarrerCycle = (jeu) => {
+  const demarrerCycle = (jeu, nbManches = 1) => {
     setJeuCourant(jeu);
     setJeuPropose(null);
     setDonneesManche(null);
+    setManchesRestantesMemeJeu(nbManches);
+    setManchesTotalMemeJeu(nbManches);
     if (jeu.groupe) {
       setJoueursRestants([]);
       setJoueurActuel(null);
@@ -212,8 +216,14 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
     setMancheNumero((n) => n + 1);
     setDonneesManche(null);
     if (jeuCourant?.groupe) {
+      if (manchesRestantesMemeJeu > 1) {
+        setManchesRestantesMemeJeu((n) => n - 1);
+        setPhase('jeu');
+        return;
+      }
       setJeuCourant(null);
       setJoueurActuel(null);
+      setManchesRestantesMemeJeu(1);
       setPhase('choix-jeu');
       return;
     }
@@ -347,7 +357,7 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
     return (
       <ReglesJeuScreen
         jeu={jeuPropose}
-        onLancer={() => demarrerCycle(jeuPropose)}
+        onLancer={(nbManches) => demarrerCycle(jeuPropose, nbManches)}
         onChangerDeJeu={() => {
           setJeuPropose(null);
           setPhase('choix-jeu');
@@ -498,31 +508,38 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
   }
 
   return (
-    <ComposantJeu
-      joueurActuel={joueurActuel}
-      joueurIndex={joueurIndex}
-      joueurs={joueurs}
-      manche={mancheNumero}
-      vitesseReglage={vitesseReglage}
-      remote={remote}
-      onChangerJeu={() => { setJeuCourant(null); setPhase('choix-jeu'); }}
-      onTermine={(payload) => {
-        if (payload) setDonneesManche(payload);
-        if (jeuCourant.voteType === 'aucun') {
-          // Un jeu 'aucun' peut soit ne rien noter lui-même (Statue
-          // Surprise, pas de payload), soit calculer ses propres points —
-          // à un seul joueur (payload.points, ex. Calcul Éclair) ou à
-          // plusieurs à la fois (payload.scores, ex. Mémoire de Groupe) —
-          // dans tous les cas, pas d'écran de vote externe après.
-          if (payload?.scores) {
-            appliquerPointsMultiples(payload.scores);
+    <>
+      {jeuCourant.groupe && manchesTotalMemeJeu > 1 && (
+        <div style={{ position: 'fixed', top: 14, right: 14, zIndex: 50, background: 'var(--accent-yellow)', color: 'var(--outline)', border: '3px solid var(--outline)', borderRadius: 999, padding: '8px 16px', fontFamily: 'var(--font-display)', fontSize: 13, boxShadow: 'var(--shadow-hard-sm)' }}>
+          Manche {manchesTotalMemeJeu - manchesRestantesMemeJeu + 1} / {manchesTotalMemeJeu} · {jeuCourant.nom}
+        </div>
+      )}
+      <ComposantJeu
+        joueurActuel={joueurActuel}
+        joueurIndex={joueurIndex}
+        joueurs={joueurs}
+        manche={mancheNumero}
+        vitesseReglage={vitesseReglage}
+        remote={remote}
+        onChangerJeu={() => { setJeuCourant(null); setPhase('choix-jeu'); }}
+        onTermine={(payload) => {
+          if (payload) setDonneesManche(payload);
+          if (jeuCourant.voteType === 'aucun') {
+            // Un jeu 'aucun' peut soit ne rien noter lui-même (Statue
+            // Surprise, pas de payload), soit calculer ses propres points —
+            // à un seul joueur (payload.points, ex. Calcul Éclair) ou à
+            // plusieurs à la fois (payload.scores, ex. Mémoire de Groupe) —
+            // dans tous les cas, pas d'écran de vote externe après.
+            if (payload?.scores) {
+              appliquerPointsMultiples(payload.scores);
+            } else {
+              appliquerPoints(payload?.points ?? 0);
+            }
           } else {
-            appliquerPoints(payload?.points ?? 0);
+            setPhase('vote');
           }
-        } else {
-          setPhase('vote');
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }
