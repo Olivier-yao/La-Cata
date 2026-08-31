@@ -1,0 +1,61 @@
+// justePrix.js — estimations de prix pour "Le Juste Prix Express" : quatre
+// fourchettes proposées, une seule contient le vrai prix (ordre de
+// grandeur ivoirien, pas besoin d'être exact au FCFA près).
+
+import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
+
+export const JUSTE_PRIX = [
+  { question: 'Le prix moyen d\'un sachet d\'eau glacée dans la rue ?', options: ['25 FCFA', '100 FCFA', '500 FCFA', '1000 FCFA'], bonneReponse: 0 },
+  { question: 'Le prix moyen d\'une course en taxi compteur pour 3km à Abidjan ?', options: ['200 FCFA', '1000 FCFA', '3000 FCFA', '8000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un attiéké-poisson chez une vendeuse de rue ?', options: ['150 FCFA', '1000 FCFA', '5000 FCFA', '15000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un abonnement mensuel internet mobile correct ?', options: ['500 FCFA', '5000 FCFA', '50000 FCFA', '150000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une paire de baskets de marque correcte ?', options: ['3000 FCFA', '15000 FCFA', '35000 FCFA', '200000 FCFA'], bonneReponse: 2 },
+  { question: 'Le prix moyen d\'un sac de riz de 25kg au marché ?', options: ['2000 FCFA', '10000 FCFA', '15000 FCFA', '40000 FCFA'], bonneReponse: 2 },
+  { question: 'Le prix moyen d\'un plein d\'essence pour une petite citadine ?', options: ['2000 FCFA', '10000 FCFA', '25000 FCFA', '60000 FCFA'], bonneReponse: 2 },
+  { question: 'Le prix moyen d\'une bière locale bien fraîche au maquis ?', options: ['100 FCFA', '600 FCFA', '3000 FCFA', '8000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un smartphone d\'entrée de gamme neuf ?', options: ['5000 FCFA', '40000 FCFA', '400000 FCFA', '1500000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une nuit dans un hôtel correct à Abidjan ?', options: ['3000 FCFA', '25000 FCFA', '150000 FCFA', '500000 FCFA'], bonneReponse: 1 },
+
+  { question: 'Le prix moyen d\'une baguette de pain ?', options: ['50 FCFA', '150 FCFA', '600 FCFA', '2000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un ticket de gbaka en ville ?', options: ['25 FCFA', '200 FCFA', '1000 FCFA', '3000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un billet de cinéma à Abidjan ?', options: ['200 FCFA', '2500 FCFA', '15000 FCFA', '40000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une coupe de cheveux homme dans un salon de quartier ?', options: ['100 FCFA', '1000 FCFA', '10000 FCFA', '30000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un litre d\'essence à la pompe ?', options: ['50 FCFA', '850 FCFA', '3000 FCFA', '8000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un régime de bananes au marché ?', options: ['100 FCFA', '1000 FCFA', '8000 FCFA', '25000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un abonnement mensuel de salle de sport correcte ?', options: ['500 FCFA', '15000 FCFA', '150000 FCFA', '400000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une paire de chaussures de ville correcte ?', options: ['1000 FCFA', '10000 FCFA', '30000 FCFA', '100000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de tomates au marché ?', options: ['50 FCFA', '500 FCFA', '3000 FCFA', '10000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un trajet en avion Abidjan-Paris (aller simple, classe économique) ?', options: ['20000 FCFA', '350000 FCFA', '2000000 FCFA', '6000000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un cahier de 100 pages pour l\'école ?', options: ['25 FCFA', '250 FCFA', '2500 FCFA', '10000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de viande de bœuf ?', options: ['500 FCFA', '3000 FCFA', '15000 FCFA', '50000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une bouteille d\'eau minérale de 1,5L ?', options: ['50 FCFA', '500 FCFA', '3000 FCFA', '8000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un forfait mensuel télévision par satellite (bouquet basique) ?', options: ['500 FCFA', '6000 FCFA', '60000 FCFA', '200000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un billet de bus interurbain (Abidjan-Yamoussoukro) ?', options: ['500 FCFA', '5000 FCFA', '25000 FCFA', '70000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un t-shirt neuf de qualité correcte ?', options: ['300 FCFA', '5000 FCFA', '25000 FCFA', '80000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de sucre ?', options: ['100 FCFA', '700 FCFA', '3000 FCFA', '9000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une console de jeux vidéo neuve, dernière génération ?', options: ['15000 FCFA', '80000 FCFA', '350000 FCFA', '1200000 FCFA'], bonneReponse: 2 },
+  { question: 'Le prix moyen d\'un repas complet dans un restaurant simple ?', options: ['200 FCFA', '2000 FCFA', '15000 FCFA', '60000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un billet de train pour un trajet local (là où le train existe) ?', options: ['50 FCFA', '600 FCFA', '5000 FCFA', '20000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un ordinateur portable d\'entrée de gamme neuf ?', options: ['30000 FCFA', '250000 FCFA', '1500000 FCFA', '4000000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo d\'oignons au marché ?', options: ['50 FCFA', '600 FCFA', '3000 FCFA', '9000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une carte SIM avec un peu de crédit ?', options: ['100 FCFA', '1000 FCFA', '10000 FCFA', '30000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un ventilateur de bureau ?', options: ['500 FCFA', '8000 FCFA', '50000 FCFA', '150000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un climatiseur neuf, entrée de gamme ?', options: ['5000 FCFA', '150000 FCFA', '700000 FCFA', '3000000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une place de concert d\'un artiste populaire ?', options: ['500 FCFA', '10000 FCFA', '80000 FCFA', '400000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de poisson frais au marché ?', options: ['200 FCFA', '2000 FCFA', '12000 FCFA', '40000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un abonnement mensuel de streaming vidéo ?', options: ['200 FCFA', '4000 FCFA', '40000 FCFA', '100000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un vélo neuf simple ?', options: ['2000 FCFA', '45000 FCFA', '250000 FCFA', '900000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une moto neuve d\'entrée de gamme ?', options: ['20000 FCFA', '350000 FCFA', '900000 FCFA', '3000000 FCFA'], bonneReponse: 2 },
+  { question: 'Le prix moyen d\'un kilo de riz importé ?', options: ['50 FCFA', '650 FCFA', '3000 FCFA', '9000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une paire de lunettes de soleil de rue ?', options: ['100 FCFA', '1500 FCFA', '15000 FCFA', '50000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un déjeuner rapide (sandwich ou similaire) en ville ?', options: ['50 FCFA', '1000 FCFA', '8000 FCFA', '25000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un abonnement mensuel d\'eau courante pour un ménage ?', options: ['200 FCFA', '5000 FCFA', '50000 FCFA', '150000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de mangues en saison ?', options: ['25 FCFA', '400 FCFA', '3000 FCFA', '9000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un tour en jet-ski ou activité nautique touristique ?', options: ['500 FCFA', '10000 FCFA', '80000 FCFA', '400000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une carte scolaire d\'assurance annuelle ?', options: ['200 FCFA', '5000 FCFA', '50000 FCFA', '200000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un kilo de sel ?', options: ['25 FCFA', '250 FCFA', '2000 FCFA', '6000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'une entrée dans un parc d\'attractions ?', options: ['100 FCFA', '3000 FCFA', '25000 FCFA', '90000 FCFA'], bonneReponse: 1 },
+  { question: 'Le prix moyen d\'un plein de gaz domestique (bouteille moyenne) ?', options: ['500 FCFA', '6000 FCFA', '40000 FCFA', '120000 FCFA'], bonneReponse: 1 },
+];
+
+export const justePrixAleatoire = creerPickerAleatoire(JUSTE_PRIX);

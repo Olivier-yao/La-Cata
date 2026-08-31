@@ -1,0 +1,61 @@
+// promptsQuiFerait.js — amorces pour "Qui Ferait Ça ?" : la table vote
+// pour la personne présente qui correspond le mieux. Les options du vote
+// sont les prénoms des joueurs, générées à l'exécution (voir le jeu).
+
+import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
+
+export const PROMPTS_QUI_FERAIT = [
+  'Qui serait le/la plus susceptible d\'oublier son propre anniversaire ?',
+  'Qui survivrait le moins longtemps dans un film d\'horreur ?',
+  'Qui deviendrait célèbre en premier, et pour quelle raison douteuse ?',
+  'Qui est le/la plus susceptible de pleurer devant une pub ?',
+  'Qui organiserait la meilleure fête surprise ?',
+  'Qui serait perdu·e sans son téléphone plus de 10 minutes ?',
+  'Qui deviendrait millionnaire et le cacherait à tout le monde ?',
+  'Qui serait le/la premier·ère à craquer dans un jeu de silence ?',
+  'Qui ferait le/la meilleur·e espion·ne ?',
+  'Qui adopterait un animal sur un coup de tête ?',
+  'Qui est le/la plus susceptible de dormir pendant un film au cinéma ?',
+  'Qui deviendrait président·e du quartier sans jamais se présenter ?',
+  'Qui négocierait le mieux le prix au marché ?',
+  'Qui serait capable de manger un piment entier pour un pari ?',
+  'Qui prendrait la fuite en premier si un fantôme apparaissait ?',
+
+  'Qui serait le/la plus susceptible de se marier sur un coup de tête ?',
+  'Qui gagnerait un concours de celui/celle qui parle le plus fort ?',
+  'Qui serait capable de dormir n\'importe où, n\'importe quand ?',
+  'Qui serait le/la plus susceptible de devenir influenceur·se demain ?',
+  'Qui oublierait le nom de son/sa propre partenaire sous la pression ?',
+  'Qui serait le/la premier·ère à abandonner un régime alimentaire ?',
+  'Qui serait le/la plus susceptible de pleurer à un mariage, même celui d\'un inconnu ?',
+  'Qui gagnerait le plus d\'argent si on le/la payait pour ne rien faire ?',
+  'Qui serait capable de vivre un mois entier sans réseaux sociaux ?',
+  'Qui serait le/la plus susceptible de se perdre dans sa propre ville ?',
+  'Qui deviendrait la personne la plus riche du groupe dans dix ans ?',
+  'Qui serait le/la plus susceptible d\'adopter dix animaux d\'un coup ?',
+  'Qui ferait le/la meilleur·e comédien·ne au cinéma ?',
+  'Qui serait le/la plus susceptible de dire un mensonge énorme sans rougir ?',
+  'Qui survivrait le plus longtemps livré·e à lui/elle-même en pleine brousse ?',
+  'Qui serait le/la plus susceptible d\'être en retard à son propre mariage ?',
+  'Qui deviendrait un excellent professeur, même sans l\'avoir prévu ?',
+  'Qui serait capable de manger le plus de piment sans broncher ?',
+  'Qui serait le/la plus susceptible de gagner à la loterie et de tout garder secret ?',
+  'Qui ferait le/la meilleur·e négociateur·rice dans une prise d\'otages fictive ?',
+  'Qui serait le/la plus susceptible de craquer devant un bébé qui pleure ?',
+  'Qui deviendrait le/la meilleur·e ami·e d\'un inconnu en cinq minutes ?',
+  'Qui serait le/la plus susceptible d\'oublier où il/elle a garé sa voiture ?',
+  'Qui serait capable de tenir un secret le plus longtemps possible ?',
+  'Qui deviendrait accro à un jeu vidéo en une seule soirée ?',
+  'Qui serait le/la plus susceptible de refaire toute sa maison sur un coup de tête ?',
+  'Qui ferait le/la meilleur·e chef·fe dans une cuisine de restaurant ?',
+  'Qui serait le/la plus susceptible de dire "je reviens dans cinq minutes" et de revenir deux heures après ?',
+  'Qui deviendrait maire du village sans même s\'être présenté·e ?',
+  'Qui serait le/la plus susceptible de rire au pire moment possible ?',
+  'Qui ferait le/la meilleur·e coach de vie pour les autres ?',
+  'Qui serait capable de convaincre n\'importe qui de n\'importe quoi ?',
+  'Qui serait le/la plus susceptible de partir vivre à l\'étranger du jour au lendemain ?',
+  'Qui deviendrait le/la chouchou·te de la belle-famille en un repas ?',
+  'Qui serait le/la plus susceptible de perdre son téléphone trois fois dans la même soirée ?',
+];
+
+export const promptQuiFeraitAleatoire = creerPickerAleatoire(PROMPTS_QUI_FERAIT);

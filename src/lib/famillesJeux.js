@@ -3,17 +3,21 @@ import {
   IconGroupe as IconGroupeFamille,
   IconDetective,
   IconStatue,
+  IconManetteFamille,
 } from '../components/icons.jsx';
 
-// famillesJeux.js — regroupe les 28 mini-jeux en 4 familles pour l'écran
+// famillesJeux.js — regroupe les mini-jeux en familles pour l'écran
 // "Choisis le mini-jeu" : la seule question que se pose l'hôte à 23h,
-// c'est combien de personnes se lèvent et pour combien de temps.
+// c'est combien de personnes se lèvent et pour combien de temps — sauf
+// Manette Party, où la question est plutôt "combien de téléphones sont
+// connectés".
 
 export const FAMILLES = [
   { id: 'chrono-solo', nom: 'Chrono solo', sousTitre: 'un joueur à la fois', Icone: IconChrono, couleur: 'var(--accent-lime)' },
   { id: 'en-groupe', nom: 'En groupe', sousTitre: 'plusieurs joueurs à la fois', Icone: IconGroupeFamille, couleur: 'var(--accent-violet)' },
   { id: 'deduction-vote', nom: 'Déduction & vote', sousTitre: 'deviner, voter, trancher', Icone: IconDetective, couleur: 'var(--accent-magenta)' },
   { id: 'corps-mouvement', nom: 'Corps & mouvement', sousTitre: 'ça se lève, ça bouge', Icone: IconStatue, couleur: 'var(--accent-cyan)' },
+  { id: 'manette-party', nom: 'Manette Party', sousTitre: 'avec les téléphones connectés', Icone: IconManetteFamille, couleur: 'var(--accent-cyan)' },
 ];
 
 export const FAMILLE_PAR_JEU = {
@@ -50,6 +54,27 @@ export const FAMILLE_PAR_JEU = {
   'dessine-a-laveugle': 'corps-mouvement',
   'devine-le-bruit': 'corps-mouvement',
   'doublage-sauvage': 'corps-mouvement',
+
+  'duel-buzzer': 'manette-party',
+  'vision-floue': 'manette-party',
+  'question-eclair': 'manette-party',
+  'compte-est-bon-express': 'manette-party',
+  'tir-a-la-corde': 'manette-party',
+  'le-trone': 'manette-party',
+  'surchauffe': 'manette-party',
+  'marathon-des-doigts': 'manette-party',
+  'sondage-choc': 'manette-party',
+  'qui-ferait-ca': 'manette-party',
+  'plus-ou-moins': 'manette-party',
+  'juste-prix-express': 'manette-party',
+  'vote-de-la-honte': 'manette-party',
+  'simon-dit-numerique': 'manette-party',
+  'memoire-flash-collective': 'manette-party',
+  'cadavre-exquis-numerique': 'manette-party',
+  'le-traitre': 'manette-party',
+  'espion-parmi-nous': 'manette-party',
+  'roue-du-destin': 'manette-party',
+  'croquis-en-direct': 'chrono-solo',
 };
 
 // Pastille "N+" affichée sur la carte des jeux en groupe qui imposent un

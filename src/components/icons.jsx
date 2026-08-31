@@ -198,3 +198,93 @@ export function IconCadenas({ color = '#C8FF4D', size = 18 }) {
     </svg>
   );
 }
+
+// --- Manette téléphone : lobby + famille "Manette Party" (20 mini-jeux) ---
+
+export function IconTelephone({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="10" y="4" width="12" height="24" rx="3" stroke={color} strokeWidth="3.4" />
+      <path d="M14 24h4" stroke={color} strokeWidth="3.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconManetteFamille({ color = '#241B2F', size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M9 12h14a5 5 0 015 6l-1 6c-.4 2.6-3.6 3.4-5.2 1.3L20 22H12l-1.8 3.3C8.6 27.4 5.4 26.6 5 24l-1-6a5 5 0 015-6z" stroke={color} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M11 15v4M9 17h4" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="24" cy="16" r="1.3" fill={color} />
+      <circle cx="21" cy="19" r="1.3" fill={color} />
+    </svg>
+  );
+}
+
+export function IconBuzzer({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="16" cy="19" r="9" stroke={color} strokeWidth="3.4" />
+      <path d="M16 10V5M12 5h8" stroke={color} strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCorde({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M5 16h22" stroke={color} strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M5 16l4.5-4.5M5 16l4.5 4.5M27 16l-4.5-4.5M27 16l-4.5 4.5" stroke={color} strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCamembertVote({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="16" cy="16" r="11" stroke={color} strokeWidth="3.4" />
+      <path d="M16 16V5a11 11 0 0111 11h-11z" fill={color} />
+    </svg>
+  );
+}
+
+export function IconSimon({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="5" y="5" width="10" height="10" rx="2" stroke={color} strokeWidth="3" />
+      <rect x="17" y="5" width="10" height="10" rx="2" stroke={color} strokeWidth="3" />
+      <rect x="5" y="17" width="10" height="10" rx="2" stroke={color} strokeWidth="3" />
+      <rect x="17" y="17" width="10" height="10" rx="2" fill={color} />
+    </svg>
+  );
+}
+
+export function IconCrayonTactile({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M8 24l1-5 13-13 4 4-13 13z" stroke={color} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M18 9l4 4" stroke={color} strokeWidth="3" />
+      <circle cx="9" cy="25" r="2" fill={color} />
+    </svg>
+  );
+}
+
+export function IconMasque({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <path d="M5 13c3-2 6-3 11-3s8 1 11 3c0 8-4 13-11 13S5 21 5 13z" stroke={color} strokeWidth="3" strokeLinejoin="round" />
+      <circle cx="12" cy="14" r="1.6" fill={color} />
+      <circle cx="20" cy="14" r="1.6" fill={color} />
+    </svg>
+  );
+}
+
+export function IconRoue({ color = '#241B2F', size = 26 }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="16" cy="16" r="11" stroke={color} strokeWidth="3.4" />
+      <path d="M16 5v22M5 16h22M8 8l16 16M24 8L8 24" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      <circle cx="16" cy="16" r="2.4" fill={color} />
+    </svg>
+  );
+}

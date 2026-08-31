@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import Avatar from './Avatar.jsx';
+import CodeQR from './CodeQR.jsx';
+import { IconTelephone } from './icons.jsx';
 
 const MAX_JOUEURS = 8;
 
-export default function PlayerSetup({ onValider }) {
+// PlayerSetup — le lobby de la soirée. Deux façons d'ajouter un joueur, qui
+// alimentent la même liste : l'hôte tape un prénom au clavier, OU un
+// téléphone scanne le QR code et tape le sien tout seul (voir
+// ManetteScreen.jsx + useRemoteHote.js pour le "joueurs-sync"). `joueurs`
+// et `onChangerJoueurs` sont contrôlés par App.jsx pour que la même liste
+// serve pendant tout le lobby ET pendant la partie.
+
+export default function PlayerSetup({ joueurs, onChangerJoueurs, remote, onValider }) {
   const [nom, setNom] = useState('');
-  const [joueurs, setJoueurs] = useState([]);
   const [erreur, setErreur] = useState('');
+
+  const nomsConnectes = new Set((remote?.connectes || []).filter((j) => j.connecte).map((j) => j.nom.toLowerCase()));
 
   const ajouter = () => {
     const propre = nom.trim();
@@ -16,12 +26,16 @@ export default function PlayerSetup({ onValider }) {
       return;
     }
     if (joueurs.length >= MAX_JOUEURS) return;
-    setJoueurs([...joueurs, propre]);
+    onChangerJoueurs([...joueurs, propre]);
     setNom('');
     setErreur('');
   };
 
-  const retirer = (j) => setJoueurs(joueurs.filter((x) => x !== j));
+  const retirer = (j) => onChangerJoueurs(joueurs.filter((x) => x !== j));
+
+  const urlManette = remote?.actif && remote.code
+    ? `${window.location.origin}${window.location.pathname}?manette=1&code=${remote.code}`
+    : null;
 
   return (
     <div className="stage playersetup-layout">
@@ -31,10 +45,10 @@ export default function PlayerSetup({ onValider }) {
           Qui se<br />sacrifie ?
         </h2>
         <p style={{ color: 'var(--text-muted)' }}>
-          Ajoute les prénoms un par un. Deux minimum, huit maximum — au-delà, la soirée dure plus que les stocks.
+          Chacun peut scanner le code à droite pour s'ajouter depuis son téléphone, ou tu tapes les prénoms ici toi-même. Deux minimum, huit maximum.
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <p className="display-title" style={{ fontSize: 12, letterSpacing: '.18em', color: 'var(--accent-yellow)' }}>Prénom</p>
+          <p className="display-title" style={{ fontSize: 12, letterSpacing: '.18em', color: 'var(--accent-yellow)' }}>Ajouter au clavier</p>
           <div style={{ display: 'flex', gap: 12 }}>
             <input
               value={nom}
@@ -82,7 +96,7 @@ export default function PlayerSetup({ onValider }) {
             className="btn btn-lime"
             style={{ width: '100%', fontSize: 20, padding: '18px 24px' }}
             disabled={joueurs.length < 2}
-            onClick={() => onValider(joueurs)}
+            onClick={onValider}
           >
             {joueurs.length < 2 ? 'Ajoute au moins 2 joueurs' : `C'est parti · ${joueurs.length} joueurs`}
           </button>
@@ -93,27 +107,49 @@ export default function PlayerSetup({ onValider }) {
       </div>
 
       <div className="playersetup-col playersetup-col-list" style={{ position: 'relative', padding: '48px 44px', display: 'flex', flexDirection: 'column', gap: 22 }}>
+        {urlManette && (
+          <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', background: 'var(--bg-panel-raised)', border: '3px solid var(--accent-cyan)', borderRadius: 18, padding: '18px 20px' }}>
+            <CodeQR url={urlManette} taille={92} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: '1 1 200px', minWidth: 0 }}>
+              <span className="display-title" style={{ fontSize: 12, letterSpacing: '.16em', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <IconTelephone color="var(--accent-cyan)" size={16} /> Connecte ton téléphone
+              </span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Scanne le code ou tape-le sur ton téléphone, même Wi-Fi que cet écran.</span>
+              <span className="display-title" style={{ fontSize: 26, color: 'var(--text-primary)', letterSpacing: '.15em', marginTop: 4 }}>{remote.code}</span>
+              <span style={{ fontSize: 12, color: 'var(--accent-lime)' }}>Ton prénom t'ajoute automatiquement à la liste.</span>
+            </div>
+          </div>
+        )}
+
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <span className="display-title" style={{ fontSize: 20 }}>Sur la ligne de départ</span>
           <span className="display-title" style={{ fontSize: 20, color: 'var(--accent-yellow)' }}>{joueurs.length} / {MAX_JOUEURS}</span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-          {joueurs.map((j, i) => (
-            <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--bg-panel-raised)', border: '3px solid var(--outline)', borderRadius: 18, padding: '14px 16px' }}>
-              <Avatar nom={j} index={i} taille={48} />
-              <span className="display-title" style={{ fontSize: 18, flex: 1 }}>{j.toUpperCase()}</span>
-              <button
-                onClick={() => retirer(j)}
-                style={{ width: 30, height: 30, borderRadius: 999, border: '2px solid var(--text-dim)', color: 'var(--text-dim)', background: 'none', cursor: 'pointer', fontSize: 16 }}
-              >
-                ×
-              </button>
-            </div>
-          ))}
+          {joueurs.map((j, i) => {
+            const viaTelephone = nomsConnectes.has(j.toLowerCase());
+            return (
+              <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--bg-panel-raised)', border: `3px solid ${viaTelephone ? 'var(--accent-cyan)' : 'var(--outline)'}`, borderRadius: 18, padding: '14px 16px' }}>
+                <Avatar nom={j} index={i} taille={48} />
+                <span className="display-title" style={{ fontSize: 18, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{j.toUpperCase()}</span>
+                {viaTelephone && (
+                  <span title="Rejoint depuis un téléphone" style={{ color: 'var(--accent-cyan)', flex: '0 0 auto', display: 'flex' }}>
+                    <IconTelephone color="var(--accent-cyan)" size={16} />
+                  </span>
+                )}
+                <button
+                  onClick={() => retirer(j)}
+                  style={{ width: 30, height: 30, flex: '0 0 auto', borderRadius: 999, border: '2px solid var(--text-dim)', color: 'var(--text-dim)', background: 'none', cursor: 'pointer', fontSize: 16 }}
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
           {joueurs.length === 0 && (
             <div style={{ gridColumn: '1 / -1', border: '3px dashed var(--border-soft)', borderRadius: 18, padding: '20px', color: 'var(--text-dim)', fontSize: 15, textAlign: 'center' }}>
-              Personne. Le silence. Tape un prénom, n'importe lequel, même celui du chat.
+              Personne. Le silence. Scanne le QR code ou tape un prénom, n'importe lequel, même celui du chat.
             </div>
           )}
         </div>

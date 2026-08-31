@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GAMES, jeuAleatoire } from '../data/games.js';
 import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
 import GameSelectScreen from './GameSelectScreen.jsx';
@@ -12,7 +12,6 @@ import VoteGradueeMultiple from '../components/vote/VoteGradueeMultiple.jsx';
 import VoteGradueeRemoteHost from '../components/vote/VoteGradueeRemoteHost.jsx';
 import VoteBinaire from '../components/vote/VoteBinaire.jsx';
 import VoteVraiFaux from '../components/vote/VoteVraiFaux.jsx';
-import { useRemoteHote } from '../lib/useRemoteHote.js';
 
 import VirelangueExpress from '../games/VirelangueExpress.jsx';
 import AccentSurprise from '../games/AccentSurprise.jsx';
@@ -44,6 +43,26 @@ import EmissionTeleAchat from '../games/EmissionTeleAchat.jsx';
 import EvasionExpress from '../games/EvasionExpress.jsx';
 import Declaration from '../games/Declaration.jsx';
 import TextoSousPression from '../games/TextoSousPression.jsx';
+import DuelDuBuzzer from '../games/DuelDuBuzzer.jsx';
+import VisionFloue from '../games/VisionFloue.jsx';
+import QuestionEclair from '../games/QuestionEclair.jsx';
+import CompteEstBonExpress from '../games/CompteEstBonExpress.jsx';
+import TirALaCorde from '../games/TirALaCorde.jsx';
+import LeTrone from '../games/LeTrone.jsx';
+import Surchauffe from '../games/Surchauffe.jsx';
+import MarathonDesDoigts from '../games/MarathonDesDoigts.jsx';
+import SondageChoc from '../games/SondageChoc.jsx';
+import QuiFeraitCa from '../games/QuiFeraitCa.jsx';
+import PlusOuMoins from '../games/PlusOuMoins.jsx';
+import LeJustePrixExpress from '../games/LeJustePrixExpress.jsx';
+import VoteDeLaHonte from '../games/VoteDeLaHonte.jsx';
+import SimonDitNumerique from '../games/SimonDitNumerique.jsx';
+import MemoireFlashCollective from '../games/MemoireFlashCollective.jsx';
+import CadavreExquisNumerique from '../games/CadavreExquisNumerique.jsx';
+import LeTraitre from '../games/LeTraitre.jsx';
+import EspionParmiNous from '../games/EspionParmiNous.jsx';
+import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
+import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
@@ -76,6 +95,26 @@ const COMPOSANTS_PAR_JEU = {
   'evasion-express': EvasionExpress,
   'declaration': Declaration,
   'texto-sous-pression': TextoSousPression,
+  'duel-buzzer': DuelDuBuzzer,
+  'vision-floue': VisionFloue,
+  'question-eclair': QuestionEclair,
+  'compte-est-bon-express': CompteEstBonExpress,
+  'tir-a-la-corde': TirALaCorde,
+  'le-trone': LeTrone,
+  'surchauffe': Surchauffe,
+  'marathon-des-doigts': MarathonDesDoigts,
+  'sondage-choc': SondageChoc,
+  'qui-ferait-ca': QuiFeraitCa,
+  'plus-ou-moins': PlusOuMoins,
+  'juste-prix-express': LeJustePrixExpress,
+  'vote-de-la-honte': VoteDeLaHonte,
+  'simon-dit-numerique': SimonDitNumerique,
+  'memoire-flash-collective': MemoireFlashCollective,
+  'cadavre-exquis-numerique': CadavreExquisNumerique,
+  'le-traitre': LeTraitre,
+  'espion-parmi-nous': EspionParmiNous,
+  'roue-du-destin': LaRoueDuDestin,
+  'croquis-en-direct': CroquisEnDirect,
 };
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement
@@ -87,9 +126,8 @@ const JEUX_SCORE_COLLECTIF = ['conversation', 'improvisation', 'mot-surprise', '
 // l'accusé et aux deux avocats).
 const JEUX_SCORE_GROUPE_IDENTIQUE = ['speed-dating-improbable', 'proces-fictif'];
 
-export default function RoundScreen({ joueurs, onNouvelleSoiree }) {
+export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
   const totalManches = joueurs.length * 3;
-  const remote = useRemoteHote(joueurs);
 
   const [jeuCourant, setJeuCourant] = useState(null);
   const [jeuPropose, setJeuPropose] = useState(null);
@@ -110,6 +148,18 @@ export default function RoundScreen({ joueurs, onNouvelleSoiree }) {
 
   const ComposantJeu = jeuCourant && COMPOSANTS_PAR_JEU[jeuCourant.id];
   const joueurIndex = joueurActuel ? joueurs.indexOf(joueurActuel) : 0;
+
+  // Écran "en attente" des manettes : dire qui joue à quoi, et le score de
+  // chacun, sans jamais montrer le texte de la manche elle-même.
+  useEffect(() => {
+    if (remote.actif) remote.envoyerContexte(jeuCourant?.nom, joueurActuel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remote.actif, jeuCourant, joueurActuel]);
+
+  useEffect(() => {
+    if (remote.actif) remote.envoyerScores(scores);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remote.actif, scores]);
 
   const proposerJeu = (jeu) => {
     setJeuPropose(jeu);
@@ -427,6 +477,23 @@ export default function RoundScreen({ joueurs, onNouvelleSoiree }) {
     }
   }
 
+  // Les 20 mini-jeux "manette" se jouent depuis les téléphones : sans au
+  // moins deux appareils connectés, l'écran d'attente n'aurait personne à
+  // attendre. On bloque proprement plutôt que de laisser le jeu tourner
+  // dans le vide.
+  if (jeuCourant.manette && remote.nbConnectes < 2) {
+    return (
+      <div className="stage" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 40, textAlign: 'center', minHeight: 420 }}>
+        <div className="display-title" style={{ fontSize: 26, color: 'var(--accent-cyan)' }}>Il manque des téléphones</div>
+        <p style={{ color: 'var(--text-muted)', maxWidth: 420 }}>
+          {jeuCourant.nom} se joue depuis les téléphones connectés — il en faut au moins deux. Fais scanner le QR code de la soirée (visible dans les réglages) avant de relancer.
+        </p>
+        <span className="tag">{remote.nbConnectes} téléphone{remote.nbConnectes > 1 ? 's' : ''} connecté{remote.nbConnectes > 1 ? 's' : ''}</span>
+        <button className="btn btn-cyan" onClick={() => { setJeuCourant(null); setPhase('choix-jeu'); }}>Changer de jeu</button>
+      </div>
+    );
+  }
+
   return (
     <ComposantJeu
       joueurActuel={joueurActuel}
@@ -434,6 +501,8 @@ export default function RoundScreen({ joueurs, onNouvelleSoiree }) {
       joueurs={joueurs}
       manche={mancheNumero}
       vitesseReglage={vitesseReglage}
+      remote={remote}
+      onChangerJeu={() => { setJeuCourant(null); setPhase('choix-jeu'); }}
       onTermine={(payload) => {
         if (payload) setDonneesManche(payload);
         if (jeuCourant.voteType === 'aucun') {

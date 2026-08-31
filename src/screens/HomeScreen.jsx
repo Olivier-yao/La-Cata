@@ -24,7 +24,7 @@ export default function HomeScreen({ onCommencer }) {
           <button className="btn btn-primary" style={{ fontSize: 20, padding: '20px 46px' }} onClick={onCommencer}>
             Lancer la soirée
           </button>
-          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Espace ou clic · une manette par personne n'est pas nécessaire</span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Espace ou clic · les téléphones se connectent juste après</span>
         </div>
       </div>
     </div>

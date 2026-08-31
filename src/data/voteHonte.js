@@ -1,0 +1,52 @@
+// voteHonte.js — situations absurdes pour "Vote de la Honte" : chacun vote
+// sa réaction sur son téléphone, les résultats révèlent qui pense comme
+// qui (et souvent, ça part en fou rire).
+
+import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
+
+export const SITUATIONS_HONTE = [
+  { situation: 'Tu croises ton ex au marché avec sa nouvelle personne. Tu fais quoi ?', options: ['Je fais style je n\'ai rien vu', 'Je vais dire bonjour direct', 'Je fais demi-tour discrètement', 'J\'envoie un message plus tard'] },
+  { situation: 'On découvre que tu as menti sur un petit détail sans importance. Ta réaction ?', options: ['J\'assume et j\'en ris', 'Je nie jusqu\'au bout', 'Je change de sujet vite fait', 'Je m\'excuse platement'] },
+  { situation: 'Ton plat préféré est raté par la personne qui l\'a cuisiné pour toi. Tu dis quoi ?', options: ['C\'est délicieux (mensonge total)', 'Je le dis franchement', 'Je mange sans rien dire', 'Je propose de recommencer ensemble'] },
+  { situation: 'Tu reçois un like sur une vieille photo gênante de ton ex. Tu fais quoi ?', options: ['Je supprime la photo direct', 'Je like en retour pour rigoler', 'Je bloque sans réfléchir', 'Je ne fais rien, ça n\'a aucune importance'] },
+  { situation: 'Quelqu\'un chante horriblement faux au karaoké. Ta réaction ?', options: ['J\'applaudis fort quand même', 'Je ris ouvertement', 'Je fais style de rien remarquer', 'Je monte chanter avec pour l\'aider'] },
+  { situation: 'On t\'annonce que la soirée est annulée à la dernière minute. Ta réaction ?', options: ['Je propose une alternative direct', 'Je suis soulagé·e en secret', 'Je râle un bon coup', 'Je vais quand même voir si ça se fait'] },
+  { situation: 'Tu te trompes de prénom en public devant tout le monde. Tu fais quoi ?', options: ['Je fais style c\'était un test', 'Je m\'excuse et je continue', 'Je deviens tout rouge et je fuis', 'J\'en rigole avec tout le monde'] },
+
+  { situation: 'Tu réalises en pleine réunion que ta braguette est ouverte depuis le début. Tu fais quoi ?', options: ['Je la referme discrètement', 'J\'attends la pause pour agir', 'Je le dis à voix haute pour couper court', 'Je fais style de rien'] },
+  { situation: 'Un ami te fait un compliment que tu sais faux. Ta réaction ?', options: ['Je remercie et je passe à autre chose', 'Je corrige poliment', 'Je ris nerveusement', 'Je le crois quand même un peu'] },
+  { situation: 'Tu envoies un message à la mauvaise personne par erreur. Tu fais quoi ?', options: ['Je le supprime en espérant que ce soit à temps', 'J\'assume et j\'explique', 'Je fais style de rien et j\'attends', 'Je panique complètement'] },
+  { situation: 'Tu tombes en public devant plusieurs personnes. Ta réaction immédiate ?', options: ['Je me relève et je ris de moi-même', 'Je fais style que c\'était voulu', 'Je vérifie d\'abord si quelqu\'un a filmé', 'Je fuis sans un mot'] },
+  { situation: 'On te surprend en train de parler tout seul. Tu dis quoi ?', options: ['Je répète une conversation dans ma tête', 'Je chantais, c\'est tout', 'Je nie complètement', 'J\'en ris avec la personne'] },
+  { situation: 'Ton ventre fait un bruit très fort en pleine réunion silencieuse. Tu fais quoi ?', options: ['Je fais style de rien', 'Je m\'excuse tout de suite', 'Je pointe quelqu\'un d\'autre du doigt', 'Je ris pour détendre l\'ambiance'] },
+  { situation: 'Tu reçois un cadeau que tu détestes ouvertement devant la personne. Ta réaction ?', options: ['Je fais semblant d\'adorer', 'Je reste poli·e sans trop en dire', 'Je dis la vérité gentiment', 'Je le garde sans jamais l\'utiliser'] },
+  { situation: 'Un inconnu te dit bonjour en pensant te connaître. Tu fais quoi ?', options: ['Je réponds comme si je le connaissais', 'Je dis directement qu\'il se trompe', 'Je fais style de réfléchir avant de répondre', 'Je pars sans rien dire'] },
+  { situation: 'Tu chantes fort dans ta voiture et quelqu\'un te voit au feu rouge. Ta réaction ?', options: ['Je continue comme si de rien n\'était', 'J\'arrête tout de suite, gêné·e', 'Je fais un clin d\'œil et je continue', 'Je baisse la vitre pour un duo improvisé'] },
+  { situation: 'On te demande ton avis sur une tenue que tu trouves ratée. Tu réponds quoi ?', options: ['C\'est joli (mensonge total)', 'Je donne mon avis honnête en douceur', 'Je détourne la question', 'Je dis franchement que ça ne va pas'] },
+  { situation: 'Tu te rends compte que tu as parlé d\'une personne juste derrière son dos, présente. Tu fais quoi ?', options: ['Je m\'excuse immédiatement', 'Je fais style de rien', 'Je nie avoir dit ça', 'J\'en ris pour détendre l\'atmosphère'] },
+  { situation: 'Ton téléphone sonne très fort avec une sonnerie gênante en public. Tu fais quoi ?', options: ['Je coupe direct, gêné·e', 'Je réponds normalement comme si de rien n\'était', 'Je ris et je montre la sonnerie fièrement', 'Je fais style que ce n\'est pas le mien'] },
+  { situation: 'Tu confonds deux jumeaux et tu t\'en rends compte trop tard. Tu fais quoi ?', options: ['Je m\'excuse platement', 'J\'en ris avec eux', 'Je fais style de ne pas m\'en rendre compte', 'Je change vite de sujet'] },
+  { situation: 'Un serveur se trompe et t\'apporte un plat que tu n\'as pas commandé. Tu fais quoi ?', options: ['Je le signale tout de suite', 'Je le mange quand même en silence', 'Je le garde en plus de ma commande', 'Je demande un échange poliment'] },
+  { situation: 'Tu éternues très fort en pleine conversation sérieuse. Ta réaction ?', options: ['Je m\'excuse et je continue', 'Je fais style que rien ne s\'est passé', 'J\'en ris fort', 'Je change complètement de sujet'] },
+  { situation: 'On te surprend en train de fouiller discrètement dans le frigo des autres. Tu dis quoi ?', options: ['Je cherchais juste de l\'eau', 'J\'assume complètement', 'Je referme vite et je fuis', 'Je propose de partager ce que j\'ai trouvé'] },
+  { situation: 'Tu te trompes de porte et tu entres dans une pièce déjà occupée. Ta réaction ?', options: ['Je m\'excuse et je ressors vite', 'Je fais style d\'avoir fait exprès', 'Je reste figé·e sans un mot', 'J\'en ris avec les personnes présentes'] },
+  { situation: 'Un ami te demande de l\'argent que tu sais ne jamais revoir. Tu fais quoi ?', options: ['Je prête quand même', 'Je refuse poliment', 'Je propose une autre forme d\'aide', 'Je prête en le rappelant plus tard'] },
+  { situation: 'Tu tapes un message en pensant l\'avoir supprimé, mais tu l\'as envoyé. Ta réaction ?', options: ['Je m\'excuse tout de suite', 'J\'assume ce que j\'ai écrit', 'Je prétends que mon téléphone a bugué', 'Je supprime et j\'attends de voir'] },
+
+  { situation: 'Tu croises quelqu\'un que tu évites depuis des mois, au même petit marché. Tu fais quoi ?', options: ['Je fais style de ne pas le/la voir', 'Je dis bonjour poliment et je repars', 'Je change complètement de rayon', 'J\'engage la conversation direct'] },
+  { situation: 'On te demande de faire un discours improvisé devant tout le monde. Ta réaction ?', options: ['Je panique mais j\'accepte', 'Je refuse gentiment', 'Je fais style d\'être malade', 'J\'accepte avec plaisir, sans stress'] },
+  { situation: 'Tu réalises que tu as un bout de nourriture coincé dans les dents depuis le début du repas. Tu fais quoi ?', options: ['Je le retire discrètement', 'J\'attends d\'être seul·e', 'Je le dis à voix haute pour en rire', 'Je fais style de rien jusqu\'à la fin'] },
+  { situation: 'Un enfant te pose une question très directe sur ton âge ou ton poids en public. Tu réponds quoi ?', options: ['Je réponds honnêtement en riant', 'Je détourne la question', 'Je change de sujet vite fait', 'Je réponds un chiffre au hasard'] },
+  { situation: 'Tu envoies accidentellement un fou rire vocal à un groupe professionnel. Tu fais quoi ?', options: ['Je supprime et j\'espère', 'Je m\'excuse tout de suite', 'J\'assume avec humour', 'Je fais style que ce n\'était pas pour eux'] },
+  { situation: 'Tu te rends compte trop tard que tu as gardé une étiquette de prix visible sur toi toute la journée. Ta réaction ?', options: ['Je ris de moi-même', 'Je suis gêné·e toute la soirée', 'Je fais style que c\'est un accessoire', 'Je la retire discrètement et je passe à autre chose'] },
+  { situation: 'On te surprend en train de répéter une conversation importante tout seul devant un miroir. Tu dis quoi ?', options: ['Je m\'entraînais pour un entretien', 'J\'assume complètement', 'Je nie tout en bloc', 'J\'en ris avec la personne'] },
+  { situation: 'Tu confonds le nom de la personne en face de toi avec celui de son ex. Ta réaction ?', options: ['Je m\'excuse platement', 'Je fais style de m\'être juste trompé·e de mot', 'Je change vite de sujet', 'J\'en ris avec elle'] },
+  { situation: 'Tu te trompes complètement de date pour un rendez-vous important. Tu fais quoi ?', options: ['Je m\'excuse et je propose une nouvelle date', 'J\'invente une excuse', 'J\'assume l\'erreur cash', 'Je fais style d\'avoir toujours su la bonne date'] },
+  { situation: 'Un proche t\'appelle par erreur et tu entends une conversation privée pas destinée à toi. Tu fais quoi ?', options: ['Je raccroche immédiatement', 'J\'écoute un peu avant de raccrocher', 'Je préviens que j\'ai tout entendu', 'Je n\'en parle jamais à personne'] },
+  { situation: 'Tu arrives à une fête déguisé·e alors que ce n\'était pas un thème costumé. Ta réaction ?', options: ['Je reste et j\'assume avec fierté', 'Je rentre me changer', 'Je retire juste l\'élément le plus voyant', 'J\'en ris et je fais style que c\'était voulu'] },
+  { situation: 'Tu te rends compte que tu portes deux chaussures différentes, en pleine journée. Tu fais quoi ?', options: ['J\'en ris et je continue ma journée', 'Je suis gêné·e toute la journée', 'Je rentre me changer si possible', 'Je fais style que c\'est une tendance'] },
+  { situation: 'On te complimente sur un travail qui n\'est pas vraiment le tien. Ta réaction ?', options: ['Je précise que ce n\'est pas moi', 'Je remercie sans corriger', 'Je partage le mérite avec la vraie personne', 'Je change de sujet, gêné·e'] },
+  { situation: 'Tu réalises en pleine conversation que ton interlocuteur a un truc coincé dans les dents. Tu fais quoi ?', options: ['Je le dis discrètement', 'Je ne dis rien pour ne pas gêner', 'J\'attends la fin de la conversation', 'Je fais des signes pour qu\'il comprenne'] },
+];
+
+export const situationHonteAleatoire = creerPickerAleatoire(SITUATIONS_HONTE);

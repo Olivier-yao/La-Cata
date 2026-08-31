@@ -41,10 +41,31 @@ function diffuserListeJoueurs(salle) {
   envoyer(salle.host, { type: 'player-list', joueurs: listeJoueursPourHost(salle) });
 }
 
+// Ping/pong toutes les 10s : sans ça, une connexion morte en silence (Wi-Fi
+// coupé, téléphone mis en veille profonde) reste "connectée" côté serveur
+// indéfiniment — le prochain vote-start part dans le vide et personne ne
+// s'en aperçoit. En forçant la fermeture des sockets qui ne répondent plus,
+// le client (voir remote.js) déclenche son propre onclose et se reconnecte
+// tout seul.
+const INTERVALLE_PING = 10000;
+const intervalPing = setInterval(() => {
+  for (const ws of wss.clients) {
+    if (ws.enVie === false) {
+      ws.terminate();
+      continue;
+    }
+    ws.enVie = false;
+    ws.ping();
+  }
+}, INTERVALLE_PING);
+wss.on('close', () => clearInterval(intervalPing));
+
 wss.on('connection', (ws) => {
   ws.role = null; // 'host' | 'player'
   ws.code = null;
   ws.nom = null;
+  ws.enVie = true;
+  ws.on('pong', () => { ws.enVie = true; });
 
   ws.on('message', (data) => {
     let msg;
@@ -76,16 +97,38 @@ wss.on('connection', (ws) => {
         envoyer(ws, { type: 'join-error', message: "Ce code ne correspond à aucune soirée en cours." });
         return;
       }
-      if (!salle.joueurs.includes(msg.nom)) {
-        envoyer(ws, { type: 'join-error', message: `« ${msg.nom} » n'est pas dans la liste des joueurs de cette soirée.` });
+      const nomPropre = (msg.nom || '').trim();
+      if (!nomPropre) return;
+      const nomExistant = salle.joueurs.find((j) => j.toLowerCase() === nomPropre.toLowerCase());
+      if (nomExistant) {
+        // Un nom déjà dans la liste : soit c'est le même téléphone qui se
+        // reconnecte (Wi-Fi coupé, page rechargée), soit un autre appareil
+        // essaie de piquer le même prénom — dans ce cas seulement, refus.
+        const dejaConnecte = salle.joueursConnectes.get(nomExistant);
+        if (dejaConnecte && dejaConnecte !== ws && dejaConnecte.readyState === dejaConnecte.OPEN) {
+          envoyer(ws, { type: 'join-error', message: `« ${nomPropre} » est déjà pris par un autre téléphone connecté.` });
+          return;
+        }
+        ws.role = 'player';
+        ws.code = msg.code;
+        ws.nom = nomExistant;
+        salle.joueursConnectes.set(nomExistant, ws);
+        envoyer(ws, { type: 'joined', nom: nomExistant, index: salle.joueurs.indexOf(nomExistant) });
+        diffuserListeJoueurs(salle);
         return;
       }
+      // Nouveau prénom : le téléphone s'ajoute tout seul à la liste des
+      // joueurs de la soirée — c'est le principe même du lobby (voir
+      // PlayerSetup.jsx côté hôte), pas besoin qu'un nom soit déjà tapé
+      // sur l'écran principal.
+      salle.joueurs.push(nomPropre);
       ws.role = 'player';
       ws.code = msg.code;
-      ws.nom = msg.nom;
-      salle.joueursConnectes.set(msg.nom, ws);
-      envoyer(ws, { type: 'joined', nom: msg.nom, index: salle.joueurs.indexOf(msg.nom) });
+      ws.nom = nomPropre;
+      salle.joueursConnectes.set(nomPropre, ws);
+      envoyer(ws, { type: 'joined', nom: nomPropre, index: salle.joueurs.indexOf(nomPropre) });
       diffuserListeJoueurs(salle);
+      envoyer(salle.host, { type: 'joueurs-sync', joueurs: salle.joueurs });
       return;
     }
 
@@ -97,11 +140,50 @@ wss.on('connection', (ws) => {
       return;
     }
 
+    if ((msg.type === 'contexte' || msg.type === 'scores') && ws.role === 'host') {
+      const salle = obtenirSalle(ws.code);
+      for (const joueurWs of salle.joueursConnectes.values()) {
+        envoyer(joueurWs, msg);
+      }
+      return;
+    }
+
     if (msg.type === 'vote' && ws.role === 'player') {
       const salle = salles.get(ws.code);
       if (!salle) return;
       envoyer(salle.host, { type: 'vote-received', nom: ws.nom, points: msg.points });
       envoyer(ws, { type: 'vote-ack' });
+      return;
+    }
+
+    // Relais générique pour les 20 mini-jeux "manette" (buzzer, mash,
+    // QCM, séquence, dessin...) : le serveur ne connaît jamais la forme
+    // de `payload`, toute la logique de jeu reste côté React (host et
+    // téléphone). Un seul couple de messages sert pour tous les jeux.
+    if (msg.type === 'action' && ws.role === 'player') {
+      const salle = salles.get(ws.code);
+      if (!salle) return;
+      envoyer(salle.host, { type: 'action', nom: ws.nom, payload: msg.payload });
+      return;
+    }
+
+    if (msg.type === 'action-broadcast' && ws.role === 'host') {
+      const salle = obtenirSalle(ws.code);
+      for (const joueurWs of salle.joueursConnectes.values()) {
+        envoyer(joueurWs, { type: 'action-broadcast', payload: msg.payload });
+      }
+      return;
+    }
+
+    // Variante "privée" : chaque téléphone reçoit un payload différent
+    // (ex. rôle secret du Traître) — le serveur route juste par prénom,
+    // sans jamais regarder ce qu'il y a dedans.
+    if (msg.type === 'action-broadcast-prive' && ws.role === 'host') {
+      const salle = obtenirSalle(ws.code);
+      Object.entries(msg.parJoueur || {}).forEach(([nom, payload]) => {
+        const joueurWs = salle.joueursConnectes.get(nom);
+        if (joueurWs) envoyer(joueurWs, { type: 'action-broadcast', payload });
+      });
       return;
     }
   });

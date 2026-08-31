@@ -1,0 +1,61 @@
+// sondagesChoc.js — questions à choix multiples sans bonne réponse pour
+// "Sondage Choc" : on vote pour voir où se trouve la majorité, pas pour
+// avoir raison.
+
+import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
+
+export const SONDAGES_CHOC = [
+  { question: 'Le pire moment pour que ton téléphone tombe en panne de batterie ?', options: ['En pleine dispute', 'Pendant un rencard', 'En te perdant dehors', 'Pendant un appel important'] },
+  { question: 'Ce que tu ferais en premier avec un million de FCFA gagné là, maintenant ?', options: ['Je le mets de côté', 'Je pars en voyage', 'Je fais la fête', 'J\'investis dans un projet'] },
+  { question: 'Le pire compagnon de voyage ?', options: ['Celui qui ronfle', 'Celui qui est toujours en retard', 'Celui qui râle tout le temps', 'Celui qui ne partage rien'] },
+  { question: 'Ta pire habitude en soirée ?', options: ['Parler trop fort', 'Disparaître sans prévenir', 'Critiquer la musique', 'Squatter le buffet'] },
+  { question: 'Le pire jour de la semaine pour avoir une mauvaise nouvelle ?', options: ['Lundi', 'Vendredi soir', 'Dimanche', 'Le jour de paie'] },
+  { question: 'Ce qui te ferait quitter une soirée sur-le-champ ?', options: ['Une coupure d\'électricité', 'Une odeur bizarre', 'Un ex qui débarque', 'Plus de nourriture'] },
+  { question: 'Le pire super-pouvoir à avoir par erreur ?', options: ['Lire les pensées de tout le monde', 'Ne plus jamais dormir', 'Rire de façon incontrôlable', 'Dire la vérité à voix haute tout le temps'] },
+  { question: 'Ta pire excuse déjà utilisée pour arriver en retard ?', options: ['Les embouteillages', 'Le réveil qui n\'a pas sonné', 'Une urgence familiale inventée', 'Je me suis perdu·e'] },
+  { question: 'Le truc le plus gênant à faire devant tout le monde ?', options: ['Trébucher', 'Oublier un prénom', 'Avoir un bruit de ventre', 'Rire au mauvais moment'] },
+  { question: 'La pire chose à recevoir en cadeau ?', options: ['Une chaussette', 'Un parfum qui pue', 'Un objet déjà cassé', 'Rien du tout'] },
+  { question: 'Ce qui casserait direct l\'ambiance d\'une soirée ?', options: ['Une coupure de musique', 'Une dispute de couple', 'Un jeu qui traîne en longueur', 'Une panne de courant'] },
+  { question: 'Le pire endroit pour tomber en panne de voiture ?', options: ['Sur l\'autoroute', 'Devant son ex', 'En pleine brousse', 'Devant le travail'] },
+
+  { question: 'La pire chanson à entendre en boucle toute une soirée ?', options: ['Une chanson d\'amour triste', 'Un tube qu\'on déteste', 'La chanson préférée de ton ex', 'Un générique de dessin animé'] },
+  { question: 'Le pire cadeau de la Saint-Valentin ?', options: ['Un balai', 'Un abonnement salle de sport', 'Rien du tout', 'Un objet déjà offert l\'an dernier'] },
+  { question: 'Ce qui te stresserait le plus juste avant un examen important ?', options: ['Oublier le stylo', 'Perdre ses fiches de révision', 'Un voisin qui parle', 'Se réveiller en retard'] },
+  { question: 'Le pire type de voisin à avoir ?', options: ['Celui qui fait la fête tous les soirs', 'Celui qui espionne tout', 'Celui qui emprunte sans rendre', 'Celui qui se plaint de tout'] },
+  { question: 'Le pire moment pour recevoir un appel de ton patron ?', options: ['En pleine sieste', 'Pendant les vacances', 'À un mariage', 'À minuit'] },
+  { question: 'Ta pire réaction si on t\'annonce une bonne nouvelle en pleine sieste ?', options: ['Tu cries de joie direct', 'Tu grognes avant de comprendre', 'Tu redemandes trois fois', 'Tu te rendors sans réagir'] },
+  { question: 'Le pire type de bruit pour te réveiller le matin ?', options: ['Un chantier', 'Un coq qui chante', 'Une dispute dehors', 'Une alarme de voiture'] },
+  { question: 'Ce qui gâcherait le plus un road trip entre amis ?', options: ['Une panne au milieu de nulle part', 'Quelqu\'un qui a le mal des transports', 'Se perdre sans réseau', 'Une dispute sur la musique'] },
+  { question: 'La pire chose à oublier avant un long voyage ?', options: ['Le chargeur de téléphone', 'Les papiers d\'identité', 'L\'argent liquide', 'Les médicaments'] },
+  { question: 'Le pire endroit pour un rendez-vous amoureux qui tourne mal ?', options: ['Un restaurant bondé', 'Chez les parents', 'Au cinéma', 'En pleine rue'] },
+  { question: 'Ta pire habitude en tant que passager en voiture ?', options: ['Critiquer la conduite', 'Dormir tout le trajet', 'Changer la musique sans demander', 'Donner des indications fausses'] },
+  { question: 'Le pire moment pour qu\'un mariage tombe en panne d\'électricité ?', options: ['Pendant les discours', 'Pendant la première danse', 'Pendant le repas', 'Pendant la remise des cadeaux'] },
+  { question: 'Ce que tu détestes le plus dans une file d\'attente ?', options: ['Quelqu\'un qui double', 'L\'attente qui n\'avance pas', 'Quelqu\'un qui parle fort au téléphone', 'Ne pas savoir combien de temps ça va durer'] },
+  { question: 'Le pire type de collègue de bureau ?', options: ['Celui qui rejette la faute sur les autres', 'Celui qui parle trop fort', 'Celui qui vole les idées', 'Celui qui ne travaille jamais'] },
+  { question: 'La pire excuse pour ne pas répondre à un message ?', options: ['Mon téléphone était en panne', 'Je n\'ai pas vu la notification', 'J\'étais trop occupé·e', 'Je préparais ma réponse'] },
+  { question: 'Le pire moment pour que ton estomac gargouille fort ?', options: ['En pleine réunion silencieuse', 'À un rendez-vous', 'Dans un ascenseur', 'À l\'église'] },
+  { question: 'Ce qui te ferait le plus rire en pleine réunion sérieuse ?', options: ['Un fou rire nerveux', 'Une blague inattendue', 'Un bruit bizarre', 'Une notification embarrassante'] },
+  { question: 'Le pire cadeau à offrir à sa belle-famille pour la première fois ?', options: ['Rien du tout', 'Un objet déjà utilisé', 'Un cadeau trop cher', 'Un cadeau clairement générique'] },
+  { question: 'Ta pire réaction si on te réveille en pleine nuit pour rien ?', options: ['Tu rigoles', 'Tu râles fort', 'Tu ne te souviens de rien le matin', 'Tu boudes toute la journée'] },
+  { question: 'Le pire son à entendre au réveil un dimanche matin ?', options: ['Une perceuse chez le voisin', 'Un appel professionnel', 'Une dispute de couple dehors', 'Une alarme incendie'] },
+  { question: 'Ce qui te gâcherait le plus un bon film au cinéma ?', options: ['Quelqu\'un qui commente tout', 'Un téléphone qui sonne', 'Une panne de son', 'Quelqu\'un qui spoile la fin'] },
+  { question: 'Le pire moment pour perdre le réseau internet ?', options: ['En plein appel important', 'En pleine série captivante', 'En plein paiement en ligne', 'En plein jeu vidéo compétitif'] },
+  { question: 'La pire chose à dire lors d\'un premier rendez-vous ?', options: ['Parler de son ex', 'Parler d\'argent', 'Parler de ses problèmes de santé', 'Ne rien dire du tout'] },
+  { question: 'Le pire type d\'invité à une fête ?', options: ['Celui qui part sans dire au revoir', 'Celui qui critique l\'organisation', 'Celui qui monopolise la conversation', 'Celui qui ne participe à rien'] },
+  { question: 'Ta pire réaction face à un mensonge découvert en public ?', options: ['Tu nies encore plus fort', 'Tu changes de sujet direct', 'Tu ris nerveusement', 'Tu assumes cash'] },
+  { question: 'Le pire moment pour qu\'un enfant pose une question gênante ?', options: ['Devant toute la famille', 'Dans un lieu public', 'Devant le/la partenaire', 'À l\'école devant tout le monde'] },
+  { question: 'Ce qui te ferait fuir une conversation direct ?', options: ['Parler politique', 'Parler d\'argent', 'Parler de ses problèmes de couple', 'Une théorie du complot'] },
+  { question: 'Le pire souvenir de vacances en famille ?', options: ['Une dispute dans la voiture', 'Un bagage perdu', 'Une intoxication alimentaire', 'Un vol annulé'] },
+  { question: 'La pire chose à porter un jour de canicule ?', options: ['Un pull en laine', 'Des habits noirs', 'Des chaussures fermées', 'Une veste'] },
+  { question: 'Le pire moment pour un délestage (coupure d\'électricité) ?', options: ['Pendant un match important', 'En pleine douche', 'Pendant la cuisson du repas', 'En plein film au meilleur moment'] },
+  { question: 'Ta pire habitude quand tu es stressé·e ?', options: ['Manger sans réfléchir', 'Devenir silencieux·se', 'Parler trop', 'Fuir la situation'] },
+  { question: 'Le pire type de message à recevoir un lundi matin ?', options: ['Une réunion ajoutée à l\'agenda', 'Une mauvaise nouvelle', 'Un rappel de facture', 'Un message qui dit juste "on doit parler"'] },
+  { question: 'Ce qui te ferait le plus regretter d\'avoir accepté une invitation ?', options: ['Se retrouver seul·e', 'Une ambiance bizarre', 'Devoir partir tôt', 'Rencontrer son ex sur place'] },
+  { question: 'Le pire moment pour tomber malade ?', options: ['La veille d\'un examen', 'Pendant les vacances', 'Le jour d\'un mariage', 'Le jour de paie'] },
+  { question: 'La pire chose à te faire offrir pour ton anniversaire ?', options: ['Rien du tout', 'Un objet déjà cassé', 'Une surprise qui tourne mal', 'Un cadeau pour quelqu\'un d\'autre'] },
+  { question: 'Le pire endroit pour être coincé·e sous une pluie diluvienne ?', options: ['En pleine rue sans abri', 'Sur une moto', 'En plein marché', 'À un arrêt de bus'] },
+  { question: 'Ta pire réaction si quelqu\'un critique ta tenue en public ?', options: ['Tu changes tout de suite', 'Tu réponds cash', 'Tu ignores complètement', 'Tu doutes de toi toute la soirée'] },
+  { question: 'Le pire moment pour que ton ventre crie de faim en public ?', options: ['En pleine réunion', 'Pendant un silence gênant', 'Devant un date', 'Pendant un discours'] },
+];
+
+export const sondageChocAleatoire = creerPickerAleatoire(SONDAGES_CHOC);

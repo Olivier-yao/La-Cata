@@ -1,0 +1,61 @@
+// plusOuMoins.js — comparaisons chiffrées pour "Plus ou Moins" : deviner
+// laquelle des deux valeurs est la plus grande. Ludique, pas besoin d'être
+// exact au chiffre près.
+
+import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
+
+export const PLUS_OU_MOINS = [
+  { question: 'Quelle distance est la plus longue ?', options: ['Abidjan → Yamoussoukro', 'Abidjan → Accra'], bonneReponse: 1 },
+  { question: 'Lequel pèse le plus lourd ?', options: ['Un éléphant d\'Afrique', 'Un rhinocéros blanc'], bonneReponse: 0 },
+  { question: 'Lequel vit le plus longtemps en moyenne ?', options: ['Une tortue géante', 'Un perroquet gris'], bonneReponse: 0 },
+  { question: 'Lequel est le plus rapide ?', options: ['Un guépard', 'Une voiture de ville en ville'], bonneReponse: 0 },
+  { question: 'Laquelle de ces villes est la plus peuplée ?', options: ['Abidjan', 'Dakar'], bonneReponse: 0 },
+  { question: 'Lequel contient le plus de sucre, en général ?', options: ['Un soda de 33cl', 'Un jus de fruit de 33cl'], bonneReponse: 0 },
+  { question: 'Lequel est le plus grand ?', options: ['Le lac Volta', 'Le lac Kossou'], bonneReponse: 0 },
+  { question: 'Lequel dure le plus longtemps ?', options: ['Un match de football (90 min réglementaires)', 'Un film de cinéma classique'], bonneReponse: 0 },
+  { question: 'Lequel coûte le plus cher à l\'achat, en général ?', options: ['Un sac de riz de 25kg', 'Un carton de 24 boîtes de tomate'], bonneReponse: 0 },
+  { question: 'Laquelle de ces populations est la plus nombreuse ?', options: ['Le Nigeria', 'L\'Égypte'], bonneReponse: 0 },
+  { question: 'Lequel met le plus de temps à mûrir ?', options: ['Une banane', 'Un avocat'], bonneReponse: 1 },
+  { question: 'Lequel consomme le plus d\'électricité par heure d\'utilisation ?', options: ['Un climatiseur', 'Un ventilateur'], bonneReponse: 0 },
+
+  { question: 'Lequel est le plus peuplé ?', options: ['Le Nigeria', 'L\'Égypte'], bonneReponse: 0 },
+  { question: 'Lequel a la plus grande superficie ?', options: ['L\'Algérie', 'La France'], bonneReponse: 0 },
+  { question: 'Laquelle des deux espèces a l\'espérance de vie la plus élevée ?', options: ['Un humain', 'Un chimpanzé'], bonneReponse: 0 },
+  { question: 'Lequel est le plus lourd ?', options: ['Une baleine bleue', 'Un éléphant d\'Afrique'], bonneReponse: 0 },
+  { question: 'Lequel court le plus vite sur de courtes distances ?', options: ['Un lion', 'Un être humain'], bonneReponse: 0 },
+  { question: 'Laquelle est la plus haute ?', options: ['La tour Eiffel', 'La cathédrale de Yamoussoukro'], bonneReponse: 0 },
+  { question: 'Lequel dure le plus longtemps en moyenne ?', options: ['Un vol Abidjan-Paris', 'Un vol Abidjan-Dakar'], bonneReponse: 0 },
+  { question: 'Lequel pèse le plus lourd, à taille égale ?', options: ['Le plomb', 'L\'aluminium'], bonneReponse: 0 },
+  { question: 'Lequel des deux a le plus d\'habitants ?', options: ['Lagos', 'Abidjan'], bonneReponse: 0 },
+  { question: 'Laquelle met le plus de temps à faire le tour du soleil ?', options: ['La Terre', 'Mercure'], bonneReponse: 0 },
+  { question: 'Lequel vit le plus longtemps, en général ?', options: ['Un perroquet gris', 'Un chien'], bonneReponse: 0 },
+  { question: 'Lequel a le temps de jeu réglementaire le plus long ?', options: ['Un match de football (90 min)', 'Un match de rugby à XV (80 min)'], bonneReponse: 0 },
+  { question: 'Laquelle est la plus profonde ?', options: ['La fosse des Mariannes', 'La mer Méditerranée'], bonneReponse: 0 },
+  { question: 'Lequel contient le plus de caféine, en général ?', options: ['Un café espresso', 'Un thé noir'], bonneReponse: 0 },
+  { question: 'Lequel a le plus de population aujourd\'hui ?', options: ['L\'Inde', 'Les États-Unis'], bonneReponse: 0 },
+  { question: 'Lequel est le plus rapide en pleine mer ?', options: ['Un espadon', 'Un dauphin'], bonneReponse: 0 },
+  { question: 'Lequel met le plus de temps à cuire, en général ?', options: ['Le riz', 'Les pâtes'], bonneReponse: 0 },
+  { question: 'Laquelle des deux villes est la plus au sud ?', options: ['Abidjan', 'Alger'], bonneReponse: 0 },
+  { question: 'Lequel des deux animaux dort le plus par jour, en moyenne ?', options: ['Le paresseux', 'Le cheval'], bonneReponse: 0 },
+  { question: 'Lequel produit le plus de café au monde ?', options: ['Le Brésil', 'La Côte d\'Ivoire'], bonneReponse: 0 },
+  { question: 'Lequel est le plus riche en calories, à quantité égale ?', options: ['L\'huile', 'Le sucre'], bonneReponse: 0 },
+  { question: 'Lequel des deux a la population la plus jeune, en moyenne ?', options: ['Le Niger', 'Le Japon'], bonneReponse: 0 },
+  { question: 'Laquelle des deux planètes est la plus grande ?', options: ['Jupiter', 'La Terre'], bonneReponse: 0 },
+  { question: 'Lequel met le plus de temps à charger complètement, en général ?', options: ['Une voiture électrique', 'Un smartphone'], bonneReponse: 0 },
+  { question: 'Lequel est le plus long ?', options: ['Le fleuve Congo', 'Le fleuve Sénégal'], bonneReponse: 0 },
+  { question: 'Lequel des deux insectes est le plus lourd ?', options: ['Le scarabée goliath', 'La fourmi'], bonneReponse: 0 },
+  { question: 'Laquelle a le plus grand nombre de médailles olympiques (pays) ?', options: ['Les États-Unis', 'Le Kenya'], bonneReponse: 0 },
+  { question: 'Lequel a le plus grand écran, en général ?', options: ['Une télévision', 'Un smartphone'], bonneReponse: 0 },
+  { question: 'Lequel des deux animaux a la vue la plus perçante ?', options: ['L\'aigle', 'Le chat'], bonneReponse: 0 },
+  { question: 'Lequel est le plus salé ?', options: ['L\'eau de mer', 'L\'eau d\'une rivière'], bonneReponse: 0 },
+  { question: 'Lequel des deux fruits contient le plus d\'eau ?', options: ['La pastèque', 'La banane'], bonneReponse: 0 },
+  { question: 'Laquelle est la plus haute chaîne de montagnes ?', options: ['L\'Himalaya', 'Les Alpes'], bonneReponse: 0 },
+  { question: 'Lequel met le plus de temps à digérer, en général ?', options: ['La viande rouge', 'La salade'], bonneReponse: 0 },
+  { question: 'Lequel des deux pays a le plus de littoral maritime ?', options: ['Le Sénégal', 'Le Burkina Faso'], bonneReponse: 0 },
+  { question: 'Lequel a la durée de vie la plus longue, en général ?', options: ['Une tortue des Galápagos', 'Un être humain'], bonneReponse: 0 },
+  { question: 'Lequel des deux véhicules consomme le plus de carburant, en général ?', options: ['Un camion', 'Une moto'], bonneReponse: 0 },
+  { question: 'Laquelle des deux est la ville la plus visitée au monde ?', options: ['Paris', 'Yamoussoukro'], bonneReponse: 0 },
+  { question: 'Lequel des deux animaux a la gestation la plus longue ?', options: ['L\'éléphant (environ 22 mois)', 'Le chat (environ 2 mois)'], bonneReponse: 0 },
+];
+
+export const plusOuMoinsAleatoire = creerPickerAleatoire(PLUS_OU_MOINS);

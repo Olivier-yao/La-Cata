@@ -1,6 +1,6 @@
 import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
 
-// games.js — Registre des 15 mini-jeux disponibles.
+// games.js — Registre des mini-jeux disponibles.
 // `voteType` détermine quel écran de vote suit la manche :
 // - 'graduee'    : trois cartes de points (1 / 3 / 6)
 // - 'binaire'    : deux issues (Sans Rire)
@@ -12,6 +12,9 @@ import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
 // fois (Statue Surprise, Conversation) : contrairement aux autres, ils ne
 // tournent pas joueur par joueur — une seule manche suffit avant de changer
 // de mini-jeu.
+// `manette: true` marque les mini-jeux "Manette Party" qui se jouent
+// exclusivement depuis les téléphones connectés (voir src/manette/) —
+// RoundScreen bloque leur lancement s'il y a moins de deux téléphones.
 // `regles` s'affiche sur l'écran d'explication avant de lancer le jeu.
 
 export const GAMES = [
@@ -207,6 +210,169 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     regles: "Une mini énigme collective s'affiche, avec des indices qui se débloquent progressivement. Toute l'équipe cherche la solution ensemble avant de la proposer.",
+  },
+
+  // --- Manette Party : les 20 mini-jeux qui se jouent depuis les
+  // téléphones connectés (voir `manette: true` et src/manette/). Chacun a
+  // besoin d'au moins deux téléphones dans la salle, sauf Croquis en
+  // Direct qui suit le flux normal "un joueur à la fois".
+  {
+    id: 'duel-buzzer',
+    nom: 'Le Duel du Buzzer',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Sans aucune question ni consigne : dès que l'hôte ouvre les buzzers, le premier qui appuie sur son téléphone gagne la manche. Pur réflexe.",
+  },
+  {
+    id: 'vision-floue',
+    nom: 'Vision Floue',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un émoji flouté s'affiche à l'écran et se précise petit à petit. Le premier qui devine ce que c'est et buzz sur son téléphone gagne.",
+  },
+  {
+    id: 'question-eclair',
+    nom: 'Question Éclair',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "L'hôte lit une question de culture générale à voix haute. Premier qui buzz sur son téléphone répond, la table juge si c'est bon.",
+  },
+  {
+    id: 'compte-est-bon-express',
+    nom: 'Le Compte est Bon Express',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une opération s'affiche à l'écran. Premier qui buzz sur son téléphone annonce son résultat à voix haute, la table juge si c'est bon.",
+  },
+  {
+    id: 'tir-a-la-corde',
+    nom: 'Tir à la Corde',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Les téléphones connectés sont répartis en deux équipes. Chacun martèle son bouton pour tirer la corde de son côté — l'équipe qui tire le plus fort gagne.",
+  },
+  {
+    id: 'le-trone',
+    nom: 'Le Trône',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Chacun martèle son bouton sur son téléphone pendant le chrono. Celui qui cumule le plus d'appuis monte sur le trône.",
+  },
+  {
+    id: 'surchauffe',
+    nom: 'Surchauffe',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un défi coopératif : tout le monde tape en même temps sur son téléphone pour atteindre ensemble un objectif d'appuis avant la fin du chrono.",
+  },
+  {
+    id: 'marathon-des-doigts',
+    nom: 'Marathon des Doigts',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Dix secondes chrono, chacun tape le plus vite possible sur son téléphone. Classement individuel au nombre d'appuis.",
+  },
+  {
+    id: 'sondage-choc',
+    nom: 'Sondage Choc',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une question à choix multiples s'affiche. Chacun vote en secret sur son téléphone, les résultats tombent en direct — ceux qui votent avec la majorité marquent des points.",
+  },
+  {
+    id: 'qui-ferait-ca',
+    nom: 'Qui Ferait Ça ?',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une situation façon \"qui serait le plus susceptible de...\" s'affiche. Chacun vote pour la personne présente qui colle le mieux — la plus désignée remporte le titre.",
+  },
+  {
+    id: 'plus-ou-moins',
+    nom: 'Plus ou Moins',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Deux valeurs s'affichent, il faut deviner laquelle est la plus grande. Chacun répond sur son téléphone, bonne réponse égale points.",
+  },
+  {
+    id: 'juste-prix-express',
+    nom: 'Le Juste Prix Express',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un objet et quatre fourchettes de prix s'affichent. Chacun estime le bon prix sur son téléphone.",
+  },
+  {
+    id: 'vote-de-la-honte',
+    nom: 'Vote de la Honte',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une situation gênante s'affiche avec plusieurs réactions possibles. Chacun vote sa vraie réaction sur son téléphone, les résultats révèlent qui pense comme qui.",
+  },
+  {
+    id: 'simon-dit-numerique',
+    nom: 'Simon Dit Numérique',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une séquence de couleurs s'affiche une seule fois sur l'écran. Chacun doit la retaper dans l'ordre sur les 4 boutons de son téléphone — classement au plus long préfixe correct.",
+  },
+  {
+    id: 'memoire-flash-collective',
+    nom: 'Mémoire Flash Collective',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Même principe que Simon, avec une séquence d'émojis à mémoriser puis reproduire sur son téléphone.",
+  },
+  {
+    id: 'cadavre-exquis-numerique',
+    nom: 'Cadavre Exquis Numérique',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Chacun dessine à son tour sur son téléphone, en direct sur un dessin collectif qui n'est jamais effacé entre deux tours. Personne ne sait ce que le résultat final donnera.",
+  },
+  {
+    id: 'le-traitre',
+    nom: 'Le Traître',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un rôle secret est envoyé sur chaque téléphone : un traître, et le reste loyal. Discussion à voix haute, puis vote téléphone pour démasquer le traître.",
+  },
+  {
+    id: 'espion-parmi-nous',
+    nom: 'Espion Parmi Nous',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Tout le monde reçoit le même lieu secret sur son téléphone, sauf un espion tiré au sort qui ne le connaît pas. Questions à voix haute sans jamais nommer le lieu, puis vote pour démasquer l'espion.",
+  },
+  {
+    id: 'roue-du-destin',
+    nom: 'La Roue du Destin',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "La roue tourne en continu sur l'écran. Chacun a un bouton STOP sur son téléphone — celui qui l'arrête sur la meilleure case gagne.",
+  },
+  {
+    id: 'croquis-en-direct',
+    nom: 'Croquis en Direct',
+    voteType: 'graduee',
+    regles: "Une consigne de dessin est envoyée sur le téléphone du joueur actif, qui dessine directement dessus — le trait apparaît en direct sur l'écran principal. La table note le résultat.",
   },
 ];
 

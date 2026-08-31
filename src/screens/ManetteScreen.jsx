@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { creerConnexionRemote } from '../lib/remote.js';
 import { couleurJoueur } from '../lib/playerColors.js';
+import { COMPOSANTS_MANETTE_PAR_PRIM } from '../lib/composantsManette.js';
 
 // ManetteScreen — ce que voit un joueur sur SON téléphone quand il rejoint
 // la soirée. Volontairement minimal : jamais le texte à lire, jamais les
@@ -26,6 +27,9 @@ export default function ManetteScreen() {
   const [erreur, setErreur] = useState('');
   const [index, setIndex] = useState(0);
   const [question, setQuestion] = useState('');
+  const [contexte, setContexte] = useState(null); // { jeu, joueur }
+  const [scores, setScores] = useState({});
+  const [actionPayload, setActionPayload] = useState(null);
   const connexionRef = useRef(null);
 
   useEffect(() => () => connexionRef.current && connexionRef.current.fermer(), []);
@@ -35,7 +39,12 @@ export default function ManetteScreen() {
     const propreNom = nom.trim();
     if (!propreCode || !propreNom) return;
     setErreur('');
-    const conn = creerConnexionRemote();
+    const conn = creerConnexionRemote({
+      // Rejoué à chaque (re)connexion : si le téléphone perd le Wi-Fi une
+      // seconde ou que le petit serveur redémarre, on redevient "Léa"
+      // automatiquement dès que la connexion revient.
+      onOuverte: () => conn.envoyer({ type: 'player-join', code: propreCode, nom: propreNom }),
+    });
     connexionRef.current = conn;
     conn.sur('joined', (msg) => {
       setIndex(msg.index);
@@ -51,12 +60,34 @@ export default function ManetteScreen() {
       setPhase('vote');
     });
     conn.sur('host-left', () => setPhase('hote-parti'));
-    conn.envoyer({ type: 'player-join', code: propreCode, nom: propreNom });
+    // contexte/scores arrivent entre les manches (nouveau joueur actif,
+    // nouveaux points) : ça marque la fin du round précédent, donc on
+    // repasse à l'écran d'attente (avec le score) plutôt que de rester
+    // bloqué sur "vote envoyé" jusqu'au prochain vote-start.
+    conn.sur('contexte', (msg) => {
+      setContexte({ jeu: msg.jeu, joueur: msg.joueur });
+      setPhase((p) => (p === 'vote' ? p : 'attente'));
+    });
+    conn.sur('scores', (msg) => {
+      setScores(msg.scores || {});
+      setPhase((p) => (p === 'vote' ? p : 'attente'));
+    });
+    // Un des 20 mini-jeux manette démarre : le payload porte son propre
+    // `prim` (buzzer/mash/qcm/sequence/dessin/role-secret) qui choisit le
+    // composant à afficher — voir composantsManette.js.
+    conn.sur('action-broadcast', (msg) => {
+      setActionPayload(msg.payload);
+      setPhase('jeu');
+    });
   };
 
   const voter = (points) => {
     connexionRef.current.envoyer({ type: 'vote', points });
     setPhase('envoye');
+  };
+
+  const envoyerAction = (payload) => {
+    connexionRef.current && connexionRef.current.envoyer({ type: 'action', payload });
   };
 
   const couleur = couleurJoueur(index);
@@ -109,6 +140,12 @@ export default function ManetteScreen() {
     );
   }
 
+  if (phase === 'jeu') {
+    const ComposantManette = COMPOSANTS_MANETTE_PAR_PRIM[actionPayload?.prim];
+    if (!ComposantManette) return null;
+    return <ComposantManette payload={actionPayload} onAction={envoyerAction} nom={nom} couleur={couleur} />;
+  }
+
   if (phase === 'vote') {
     return (
       <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: 24, padding: '32px 20px', background: couleur.bg }}>
@@ -142,14 +179,41 @@ export default function ManetteScreen() {
   }
 
   // attente
+  const classement = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const monRang = classement.findIndex(([n]) => n === nom) + 1;
+  const monScore = scores[nom] || 0;
+
   return (
-    <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, padding: 30, textAlign: 'center' }}>
+    <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: 0 }}>
       <div className="stripes-bg" />
-      <div style={{ position: 'relative', width: 90, height: 90, borderRadius: 999, background: couleur.bg, color: couleur.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: 34 }}>
-        {nom.charAt(0).toUpperCase()}
+      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, padding: 30, textAlign: 'center' }}>
+        <div style={{ width: 90, height: 90, borderRadius: 999, background: couleur.bg, color: couleur.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: 34 }}>
+          {nom.charAt(0).toUpperCase()}
+        </div>
+        <div className="display-title" style={{ fontSize: 22 }}>{nom}</div>
+        <p style={{ color: 'var(--text-muted)' }}>Connecté·e. En attente du prochain vote...</p>
+        {contexte?.jeu && (
+          <p style={{ color: 'var(--text-dim)', fontSize: 14, maxWidth: 280 }}>
+            {contexte.joueur === nom
+              ? `C'est ton tour ! ${contexte.jeu}.`
+              : contexte.joueur
+              ? `${contexte.joueur} joue à ${contexte.jeu}.`
+              : `Manche en cours : ${contexte.jeu}.`}{' '}
+            Regarde l'écran, pas ton téléphone.
+          </p>
+        )}
       </div>
-      <div className="display-title" style={{ position: 'relative', fontSize: 22 }}>{nom}</div>
-      <p style={{ position: 'relative', color: 'var(--text-muted)' }}>Connecté·e. En attente du prochain vote...</p>
+      {classement.length > 0 && (
+        <div style={{ position: 'relative', padding: '18px 24px', background: 'var(--bg-deep)', borderTop: '3px solid var(--outline)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div className="display-title" style={{ fontSize: 11, letterSpacing: '.14em', color: 'var(--text-dim)' }}>TON SCORE</div>
+            <div className="display-title" style={{ fontSize: 22, color: 'var(--accent-violet)' }}>{monScore} PTS</div>
+          </div>
+          {monRang > 0 && (
+            <span className="tag">{monRang}E SUR {classement.length}</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
