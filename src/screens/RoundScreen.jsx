@@ -379,6 +379,7 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
         onTerminer={() => setPhase('podium')}
         modeAuto={modeAuto}
         onQuitterAuto={quitterModeAuto}
+        resultat={donneesManche?.resultat}
       />
     );
   }

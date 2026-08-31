@@ -5,7 +5,7 @@ import Avatar from '../components/Avatar.jsx';
 // (kit, écran 14). Le meneur ressort en citron-vert plein avec ombre
 // magenta ; les autres lignes restent en surface sombre.
 
-export default function ScoreboardScreen({ joueurs, scores, manche, totalManches, onMancheSuivante, onTerminer, modeAuto, onQuitterAuto }) {
+export default function ScoreboardScreen({ joueurs, scores, manche, totalManches, onMancheSuivante, onTerminer, modeAuto, onQuitterAuto, resultat }) {
   const classement = joueurs
     .map((nom, i) => ({ nom, index: i, points: scores[nom] || 0 }))
     .sort((a, b) => b.points - a.points);
@@ -24,6 +24,12 @@ export default function ScoreboardScreen({ joueurs, scores, manche, totalManches
           <span style={{ width: 22, height: 22, borderRadius: 999, border: '3px solid var(--accent-cyan)', borderTopColor: 'transparent', animation: 'lc-spin .9s linear infinite' }} />
         </div>
       </div>
+
+      {resultat && (
+        <div style={{ position: 'relative', background: 'var(--bg-panel-raised)', border: '3px solid var(--accent-magenta)', borderRadius: 16, padding: '14px 20px' }}>
+          <span className="display-title" style={{ fontSize: 15, color: 'var(--accent-magenta)' }}>{resultat}</span>
+        </div>
+      )}
 
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {classement.map(({ nom, index, points }, rang) => {
