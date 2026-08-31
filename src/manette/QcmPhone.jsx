@@ -24,12 +24,22 @@ export default function QcmPhone({ payload, onAction }) {
   };
 
   if (etat === 'resultat') {
-    const aBonneReponse = payload.bonneReponse != null && choixEnvoye === payload.bonneReponse;
+    const estEgalite = payload.estEgalite;
+    const aBonneReponse = !estEgalite && payload.bonneReponse != null && choixEnvoye === payload.bonneReponse;
+    const fond = estEgalite ? 'var(--bg-deep)' : aBonneReponse ? 'var(--accent-lime)' : 'var(--bg-deep)';
+    const texte = choixEnvoye == null
+      ? 'Pas de réponse envoyée'
+      : estEgalite
+        ? (payload.texteEgalite || 'Égalité — personne ne marque de points.')
+        : aBonneReponse
+          ? (payload.texteReussite || 'BIEN VU !')
+          : (payload.texteEchec || 'Résultat affiché sur l\'écran principal');
     return (
-      <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30, background: aBonneReponse ? 'var(--accent-lime)' : 'var(--bg-deep)' }}>
-        <div className="display-title" style={{ fontSize: 24, color: aBonneReponse ? 'var(--outline)' : 'var(--text-primary)' }}>
-          {choixEnvoye == null ? 'Pas de réponse envoyée' : aBonneReponse ? 'BIEN VU !' : 'Résultat affiché sur l\'écran principal'}
-        </div>
+      <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30, background: fond }}>
+        <div className="display-title" style={{ fontSize: 24, color: !estEgalite && aBonneReponse ? 'var(--outline)' : 'var(--text-primary)' }}>{texte}</div>
+        {estEgalite && payload.optionsEgalite?.length > 0 && (
+          <p style={{ color: 'var(--text-muted)' }}>Égalité entre {payload.optionsEgalite.join(' et ')}.</p>
+        )}
       </div>
     );
   }

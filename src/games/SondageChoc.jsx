@@ -15,6 +15,9 @@ export default function SondageChoc({ manche, remote, onTermine }) {
         options={s.options}
         duree={14}
         modeScoring="majorite"
+        texteReussite="COMME LA MAJORITÉ !"
+        texteEchec="Voix isolée, mais respectée."
+        texteEgalite="Vote coupé en deux, personne ne marque de points."
         consigne="Chacun vote en secret sur son téléphone. Ceux qui votent avec la majorité gagnent des points."
         onTermine={(scores) => onTermine({ scores })}
       />

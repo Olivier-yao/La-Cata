@@ -17,6 +17,8 @@ export default function LeJustePrixExpress({ manche, remote, onTermine }) {
         modeScoring="correct"
         bonneReponse={q.bonneReponse}
         pointsGagnant={6}
+        texteReussite="PRIX EXACT !"
+        texteEchec="Raté, le vrai prix s'affiche sur l'écran."
         consigne="Estime le bon prix sur ton téléphone."
         onTermine={(scores) => onTermine({ scores })}
       />

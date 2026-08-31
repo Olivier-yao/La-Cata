@@ -15,6 +15,9 @@ export default function VoteDeLaHonte({ manche, remote, onTermine }) {
         options={s.options}
         duree={14}
         modeScoring="majorite"
+        texteReussite="TU ES DANS LA MAJORITÉ"
+        texteEchec="Voix isolée — assume ton choix."
+        texteEgalite="Vote coupé en deux, personne n'a honte de plus que l'autre."
         consigne="Vote ta vraie réaction. Ceux qui pensent comme la majorité gagnent des points."
         onTermine={(scores) => onTermine({ scores })}
       />

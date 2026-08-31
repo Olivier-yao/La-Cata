@@ -12,11 +12,13 @@ export default function PlusOuMoins({ manche, remote, onTermine }) {
       <QcmHost
         remote={remote}
         question={q.question}
-        options={q.options}
+        options={[...q.options, 'À peu près égal']}
         duree={10}
         modeScoring="correct"
         bonneReponse={q.bonneReponse}
         pointsGagnant={5}
+        texteReussite="DANS LE MILLE !"
+        texteEchec="Perdu, la bonne réponse s'affiche sur l'écran."
         consigne="Chacun choisit sur son téléphone. Bonne réponse = points."
         onTermine={(scores) => onTermine({ scores })}
       />
