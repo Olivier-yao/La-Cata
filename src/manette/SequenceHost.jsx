@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// SequenceHost — une séquence de 4 couleurs/emojis est montrée UNE FOIS sur
+// SequenceHost — une séquence de couleurs/emojis est montrée UNE FOIS sur
 // l'écran principal (tout le monde regarde en même temps), puis chaque
-// téléphone doit la retaper dans l'ordre sur ses 4 boutons. Classement par
-// plus grand préfixe correct. Sert à Simon Dit Numérique (couleurs) et
-// Mémoire Flash Collective (emojis, mêmes 4 boutons, juste redécorés).
+// téléphone doit la retaper dans l'ordre sur ses boutons (4 par défaut,
+// `nbCases` pour en proposer plus — Simon Dit Numérique passe à 8).
+// Classement par plus grand préfixe correct. Sert à Simon Dit Numérique
+// (couleurs) et Mémoire Flash Collective (emojis, mêmes boutons, juste
+// redécorés).
 
-const COULEURS = ['var(--accent-lime)', 'var(--accent-magenta)', 'var(--accent-cyan)', 'var(--accent-yellow)'];
+export const COULEURS_SEQUENCE = [
+  'var(--accent-lime)', 'var(--accent-magenta)', 'var(--accent-cyan)', 'var(--accent-yellow)',
+  'var(--accent-violet)', '#FF8A4D', '#4DFFC8', '#FF4DCF',
+];
 
-export default function SequenceHost({ remote, longueur = 5, symboles, consigne, onTermine }) {
+export default function SequenceHost({ remote, longueur = 5, nbCases = 4, symboles, consigne, onTermine }) {
   const [etape, setEtape] = useState('avant'); // avant | montre | ouvert | resultat
   const [flash, setFlash] = useState(-1);
   const [sequence, setSequence] = useState([]);
@@ -20,7 +25,7 @@ export default function SequenceHost({ remote, longueur = 5, symboles, consigne,
   const demarrer = () => {
     remote.resetActions();
     idRef.current = Date.now();
-    const seq = Array.from({ length: longueur }, () => Math.floor(Math.random() * 4));
+    const seq = Array.from({ length: longueur }, () => Math.floor(Math.random() * nbCases));
     setSequence(seq);
     setEtape('montre');
     timersRef.current.forEach(clearTimeout);
@@ -31,7 +36,7 @@ export default function SequenceHost({ remote, longueur = 5, symboles, consigne,
     });
     timersRef.current.push(setTimeout(() => {
       setEtape('ouvert');
-      remote.envoyerAction({ prim: 'sequence', etape: 'ouvert', longueur: seq.length, id: idRef.current });
+      remote.envoyerAction({ prim: 'sequence', etape: 'ouvert', longueur: seq.length, nbCases, id: idRef.current });
     }, seq.length * 750 + 400));
   };
 
@@ -65,9 +70,9 @@ export default function SequenceHost({ remote, longueur = 5, symboles, consigne,
       {etape === 'avant' && <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={demarrer}>Montrer la séquence</button>}
 
       {etape === 'montre' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, width: 220, height: 220 }}>
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} style={{ borderRadius: 18, background: COULEURS[i], opacity: flash === i ? 1 : 0.25, transition: 'opacity .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${nbCases > 4 ? 4 : 2}, 1fr)`, gap: 14, width: nbCases > 4 ? 380 : 220, height: nbCases > 4 ? 190 : 220 }}>
+          {Array.from({ length: nbCases }, (_, i) => i).map((i) => (
+            <div key={i} style={{ borderRadius: 18, background: COULEURS_SEQUENCE[i], opacity: flash === i ? 1 : 0.25, transition: 'opacity .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>
               {symboles ? symboles[i] : ''}
             </div>
           ))}

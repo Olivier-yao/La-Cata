@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { COULEURS_SEQUENCE } from './SequenceHost.jsx';
 
-const COULEURS = ['var(--accent-lime)', 'var(--accent-magenta)', 'var(--accent-cyan)', 'var(--accent-yellow)'];
-
-// SequencePhone — 4 gros boutons colorés. Chaque tap ajoute à la réponse
+// SequencePhone — des gros boutons colorés (4 par défaut, jusqu'à 8 si
+// l'hôte l'annonce via `payload.nbCases`). Chaque tap ajoute à la réponse
 // locale et renvoie le tableau complet (plus simple que d'accumuler côté
 // serveur) ; le bouton "Valider" clôt la réponse avant la fin du temps si
 // le joueur est sûr de lui.
@@ -45,15 +45,17 @@ export default function SequencePhone({ payload, onAction, symboles }) {
     );
   }
 
+  const nbCases = payload?.nbCases || 4;
+
   return (
     <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22, padding: 30 }}>
       <div className="display-title" style={{ fontSize: 16, color: 'var(--text-dim)' }}>REPRODUIS LA SÉQUENCE · {reponse.length}/{payload?.longueur}</div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, width: 240, height: 240 }}>
-        {[0, 1, 2, 3].map((i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${nbCases > 4 ? 4 : 2}, 1fr)`, gap: 14, width: nbCases > 4 ? 300 : 240, height: nbCases > 4 ? 150 : 240 }}>
+        {Array.from({ length: nbCases }, (_, i) => i).map((i) => (
           <button
             key={i}
             onClick={() => taper(i)}
-            style={{ borderRadius: 20, background: COULEURS[i], border: '4px solid var(--outline)', fontSize: 32, touchAction: 'manipulation' }}
+            style={{ borderRadius: 20, background: COULEURS_SEQUENCE[i], border: '4px solid var(--outline)', fontSize: 28, touchAction: 'manipulation' }}
           >
             {symboles ? symboles[i] : ''}
           </button>

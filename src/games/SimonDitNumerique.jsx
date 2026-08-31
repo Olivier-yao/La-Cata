@@ -10,7 +10,8 @@ export default function SimonDitNumerique({ manche, remote, onTermine }) {
       <SequenceHost
         remote={remote}
         longueur={5}
-        consigne="Regardez tous la séquence de couleurs sur l'écran, puis retapez-la sur vos téléphones."
+        nbCases={8}
+        consigne="Regardez tous la séquence de couleurs sur l'écran, puis retapez-la sur vos téléphones. 8 couleurs cette fois — ouvrez l'œil."
         onTermine={(scores) => onTermine({ scores })}
       />
     </div>
