@@ -240,7 +240,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Même principe que Simon, avec une séquence d'émojis à mémoriser puis reproduire sur son téléphone.",
+    regles: "Un nombre à 5 chiffres s'affiche quelques secondes sur l'écran principal, tout le monde mémorise en même temps. Chacun le retape ensuite sur son téléphone (personne ne voit ce que les autres tapent), et la révélation compare chiffre par chiffre à la fin.",
   },
   {
     id: 'cadavre-exquis-numerique',
