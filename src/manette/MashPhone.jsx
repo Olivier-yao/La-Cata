@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // (throttle 100ms) pour ne pas noyer le petit serveur de messages.
 
 export default function MashPhone({ payload, onAction, couleur }) {
-  const [etat, setEtat] = useState('attente'); // attente | ouvert | fini
+  const [etat, setEtat] = useState('attente'); // attente | ouvert | fini | spectateur
   const [affichage, setAffichage] = useState(0);
   const compteRef = useRef(0);
   const dernierEnvoiRef = useRef(0);
@@ -18,9 +18,12 @@ export default function MashPhone({ payload, onAction, couleur }) {
       compteRef.current = 0;
       setAffichage(0);
       setEtat('ouvert');
+    } else if (payload.etape === 'spectateur' && payload.id !== idRef.current) {
+      idRef.current = payload.id;
+      setEtat('spectateur');
     } else if (payload.etape === 'fin' && payload.id === idRef.current) {
-      setEtat('fini');
-      onAction({ prim: 'mash', total: compteRef.current, id: idRef.current });
+      if (etat === 'ouvert') onAction({ prim: 'mash', total: compteRef.current, id: idRef.current });
+      if (etat !== 'spectateur') setEtat('fini');
     }
   }, [payload]);
 
@@ -42,6 +45,16 @@ export default function MashPhone({ payload, onAction, couleur }) {
       <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30 }}>
         <div className="display-title" style={{ fontSize: 26 }}>TERMINÉ</div>
         <p style={{ color: 'var(--text-muted)' }}>{affichage} appuis</p>
+      </div>
+    );
+  }
+
+  if (etat === 'spectateur') {
+    return (
+      <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30 }}>
+        <span style={{ fontSize: 40 }}>👀</span>
+        <div className="display-title" style={{ fontSize: 22 }}>TU REGARDES CETTE MANCHE</div>
+        <p style={{ color: 'var(--text-muted)' }}>Regarde le duel sur l'écran, ton tour reviendra.</p>
       </div>
     );
   }

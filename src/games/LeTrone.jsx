@@ -10,8 +10,9 @@ export default function LeTrone({ manche, remote, onTermine }) {
       <MashHost
         remote={remote}
         mode="ffa"
+        visuel="trone"
         duree={8}
-        consigne="Chacun tape sur son téléphone. Le plus d'appuis à la fin du chrono monte sur le trône."
+        consigne="Chacun tape sur son téléphone. Ton trône monte à chaque appui — le plus haut à la fin s'assoit dessus."
         onTermine={(scores) => onTermine({ scores })}
       />
     </div>
