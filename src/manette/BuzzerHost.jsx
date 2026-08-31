@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // BuzzerHost — premier qui appuie gagne, avec deux options composables :
 //
-// `auto` : pas de bouton "Ouvrir les buzzers" — un décompte de 15s se
-// lance tout seul au montage, puis les buzzers s'ouvrent après un délai
-// supplémentaire aléatoire (0,6 à 2,8s) pour qu'on ne puisse jamais
-// anticiper exactement le moment (Le Duel du Buzzer, Vision Floue,
-// Question Éclair, Le Compte est Bon Express).
+// `auto` : pas de bouton "Ouvrir les buzzers" — un décompte visuel de 15s
+// se lance tout seul au montage, mais les buzzers peuvent s'ouvrir à
+// n'importe quel instant de cette fenêtre (dès 2s, jusqu'à 15s) : le
+// chiffre à l'écran n'est qu'une mise en scène, pas une horloge à
+// attendre jusqu'au bout — impossible d'anticiper le moment exact (Le
+// Duel du Buzzer, Vision Floue, Question Éclair, Le Compte est Bon
+// Express).
 //
 // `question`/`options`/`bonneReponse` : après avoir buzzé, le premier
 // reçoit en privé un QCM sur son téléphone avec un temps réduit pour
@@ -22,7 +24,7 @@ export default function BuzzerHost({
   onTermine,
 }) {
   const avecQcm = Array.isArray(options) && options.length > 0;
-  const [etape, setEtape] = useState('avant'); // avant | compte-a-rebours | suspense | ouvert | repondre | resultat | personne
+  const [etape, setEtape] = useState('avant'); // avant | compte-a-rebours | ouvert | repondre | resultat | personne
   const [gagnant, setGagnant] = useState(null);
   const [decompte, setDecompte] = useState(15);
   const [exclus, setExclus] = useState([]);
@@ -56,18 +58,20 @@ export default function BuzzerHost({
     setEtape('compte-a-rebours');
     setDecompte(15);
     remote.envoyerAction({ prim: 'buzzer', etape: 'attente', consigne });
-    let n = 15;
+    // Le chiffre affiché descend juste pour l'ambiance : l'ouverture réelle
+    // tombe à un instant aléatoire dans la fenêtre, pas forcément à 0 — pas
+    // besoin d'attendre la fin du décompte pour que ça ouvre.
+    const debut = Date.now();
+    const delaiOuverture = 2000 + Math.random() * 13000;
     const interval = setInterval(() => {
-      n -= 1;
-      setDecompte(n);
-      if (n <= 0) {
-        clearInterval(interval);
-        setEtape('suspense');
-        const delai = 600 + Math.random() * 2200;
-        timersRef.current.push(setTimeout(() => demarrer(), delai));
-      }
-    }, 1000);
+      const restant = Math.max(0, Math.ceil((15000 - (Date.now() - debut)) / 1000));
+      setDecompte(restant);
+    }, 250);
     timersRef.current.push(interval);
+    timersRef.current.push(setTimeout(() => {
+      clearInterval(interval);
+      demarrer();
+    }, delaiOuverture));
   };
 
   useEffect(() => {
@@ -145,13 +149,9 @@ export default function BuzzerHost({
 
       {etape === 'compte-a-rebours' && (
         <>
-          <div className="display-title" style={{ fontSize: 64, color: 'var(--accent-yellow)' }}>{decompte}</div>
-          <p style={{ color: 'var(--text-dim)' }}>Préparez vos téléphones… ça peut ouvrir à tout moment après.</p>
+          <div className="display-title" style={{ fontSize: 64, color: 'var(--accent-yellow)', animation: 'lc-wobble .5s ease-in-out infinite' }}>{decompte}</div>
+          <p style={{ color: 'var(--text-dim)' }}>Préparez vos téléphones… ça peut ouvrir à tout moment, même maintenant.</p>
         </>
-      )}
-
-      {etape === 'suspense' && (
-        <div className="display-title" style={{ fontSize: 40, color: 'var(--accent-magenta)', animation: 'lc-wobble .35s ease-in-out infinite' }}>…</div>
       )}
 
       {etape === 'ouvert' && (
