@@ -93,8 +93,10 @@ export const GAMES = [
   {
     id: 'emission-tele-achat',
     nom: 'Émission de Télé-Achat',
-    voteType: 'graduee',
-    regles: "Un objet inutile s'affiche à l'écran. Le joueur a 30 secondes pour le vendre comme le meilleur produit du siècle. La table note ensuite le pitch.",
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un objet inutile s'affiche à l'écran. Un·e vendeur·se tiré·e au sort le vend à voix haute pendant que le reste enchérit sur son téléphone par paliers croissants — ou coupe tout d'un coup avec l'achat immédiat, plus cher mais instantané.",
   },
   {
     id: 'declaration',

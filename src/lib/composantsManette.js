@@ -7,6 +7,7 @@ import RolePhone from '../manette/RolePhone.jsx';
 import EstimationPhone from '../manette/EstimationPhone.jsx';
 import JaugePhone from '../manette/JaugePhone.jsx';
 import ProcesAvocatPhone from '../manette/ProcesAvocatPhone.jsx';
+import TeleAchatPhone from '../manette/TeleAchatPhone.jsx';
 
 // composantsManette.js — associe le `prim` d'un payload d'action-broadcast
 // au composant téléphone qui sait l'afficher. Un seul point d'entrée pour
@@ -23,4 +24,5 @@ export const COMPOSANTS_MANETTE_PAR_PRIM = {
   estimation: EstimationPhone,
   jauge: JaugePhone,
   'proces-avocat': ProcesAvocatPhone,
+  'tele-achat': TeleAchatPhone,
 };

@@ -21,7 +21,6 @@ export const FAMILLES = [
 export const FAMILLE_PAR_JEU = {
   'virelangue-express': 'chrono-solo',
   'calcul-eclair': 'chrono-solo',
-  'emission-tele-achat': 'chrono-solo',
   'memoire-flash': 'chrono-solo',
   'texte-corse': 'chrono-solo',
   'improvisation-titre': 'chrono-solo',
@@ -56,6 +55,7 @@ export const FAMILLE_PAR_JEU = {
   'espion-parmi-nous': 'manette-party',
   'roue-du-destin': 'manette-party',
   'proces-fictif': 'manette-party',
+  'emission-tele-achat': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 
