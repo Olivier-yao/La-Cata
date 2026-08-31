@@ -19,6 +19,9 @@ import Avatar from '../components/Avatar.jsx';
 //   (Qui Ferait Ça ?). Égalité = personne ne marque de points.
 // - 'aucun'     : pas de points distribués ici (le jeu appelant gère lui-
 //   même via `onResultat`, ex. le vote de démasquage du Traître).
+// - 'revele'    : pas de bonne réponse ni de gagnant du tout — on montre
+//   juste qui a voté quoi, zéro point pour tout le monde (Qui Ferait Ça ?
+//   n'a jamais eu de vainqueur, seulement des réponses à comparer).
 //
 // `texteReussite`/`texteEchec`/`texteEgalite` personnalisent le retour
 // affiché sur le téléphone de chaque votant (éviter le "bien vu"
@@ -80,7 +83,7 @@ export default function QcmHost({
 
   useEffect(() => {
     if (etape === 'resultat') {
-      const gagnant = modeScoring === 'correct' ? bonneReponse : indexMajoritaire;
+      const gagnant = modeScoring === 'correct' ? bonneReponse : modeScoring === 'revele' ? null : indexMajoritaire;
       remote.envoyerAction({
         prim: 'qcm', etape: 'resultat', bonneReponse: gagnant, estEgalite,
         optionsEgalite: estEgalite ? indicesMajoritaires.map((i) => options[i]) : [],
@@ -96,7 +99,9 @@ export default function QcmHost({
       return;
     }
     const scores = {};
-    if (modeScoring === 'correct' && bonneReponse != null) {
+    if (modeScoring === 'revele') {
+      nomsConnectes.forEach((nom) => { scores[nom] = 0; });
+    } else if (modeScoring === 'correct' && bonneReponse != null) {
       Object.entries(choix).forEach(([nom, c]) => { scores[nom] = c === bonneReponse ? pointsGagnant : 0; });
     } else if (modeScoring === 'cible') {
       if (!estEgalite && options[indexMajoritaire]) scores[options[indexMajoritaire]] = pointsGagnant;

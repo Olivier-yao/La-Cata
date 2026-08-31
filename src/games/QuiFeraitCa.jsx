@@ -14,12 +14,9 @@ export default function QuiFeraitCa({ manche, joueurs, remote, onTermine }) {
         question={prompt}
         options={joueurs}
         duree={14}
-        modeScoring="cible"
-        pointsGagnant={4}
-        texteReussite="MÊME AVIS QUE LE GROUPE"
-        texteEchec="Vision différente du groupe, mais assumée."
-        texteEgalite="Égalité entre deux suspects — personne ne remporte le titre."
-        consigne="Chacun vote pour la personne présente qui colle le mieux. Le plus désigné remporte le titre (et les points)."
+        modeScoring="revele"
+        texteEchec="Réponses révélées, aucun point en jeu."
+        consigne="Chacun vote pour la personne présente qui colle le mieux. Pas de gagnant ici : juste de quoi rigoler des réponses de la table."
         onTermine={(scores) => onTermine({ scores })}
       />
     </div>
