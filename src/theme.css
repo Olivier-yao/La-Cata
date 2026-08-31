@@ -116,6 +116,15 @@ body {
 @keyframes lc-rowin { from { transform: translateX(-14px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes lc-cardin { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+/* Écran "Règles du jeu" : entrée en cascade (pictogramme, puis titre,
+   encart, boutons, chacun décalé de 140ms) — voir ReglesJeuScreen.jsx. */
+@keyframes lc-iconpop {
+  0% { transform: scale(.4) rotate(-40deg); opacity: 0; }
+  60% { transform: scale(1.06) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes lc-cascadein { from { transform: translateX(-60px) skewX(-8deg); opacity: 0; } to { transform: translateX(0) skewX(0deg); opacity: 1; } }
+
 .eyebrow {
   font-family: var(--font-display);
   color: var(--accent-magenta);
