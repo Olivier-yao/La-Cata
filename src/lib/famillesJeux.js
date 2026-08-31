@@ -30,7 +30,6 @@ export const FAMILLE_PAR_JEU = {
 
   'conversation': 'en-groupe',
   'histoire-plusieurs-voix': 'en-groupe',
-  'proces-fictif': 'en-groupe',
   'speed-dating-improbable': 'en-groupe',
   'mot-surprise': 'en-groupe',
   'categories-chrono': 'en-groupe',
@@ -56,6 +55,7 @@ export const FAMILLE_PAR_JEU = {
   'le-traitre': 'manette-party',
   'espion-parmi-nous': 'manette-party',
   'roue-du-destin': 'manette-party',
+  'proces-fictif': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 
@@ -68,7 +68,7 @@ export const BADGE_JOUEURS = {
   'conversation': '2+',
   'improvisation': '3+',
   'histoire-plusieurs-voix': '3+',
-  'proces-fictif': '3+',
+  'proces-fictif': '4+',
   'speed-dating-improbable': '2',
   'mot-surprise': '2+',
 };

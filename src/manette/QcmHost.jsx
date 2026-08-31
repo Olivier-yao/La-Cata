@@ -26,24 +26,33 @@ import Avatar from '../components/Avatar.jsx';
 // `texteReussite`/`texteEchec`/`texteEgalite` personnalisent le retour
 // affiché sur le téléphone de chaque votant (éviter le "bien vu"
 // générique quand le jeu n'a pas vraiment de bonne réponse).
+//
+// `votantsEligibles` restreint le vote à une liste de prénoms (le reste
+// des téléphones connectés ne reçoit rien) — pour un jury qui vote sans
+// l'accusé ni les avocats, par exemple (Procès Fictif).
 
 export default function QcmHost({
   remote, question, consigne, options, duree = 12, modeScoring = 'majorite', bonneReponse, pointsGagnant = 6,
   texteReussite = 'BIEN VU !', texteEchec = 'Résultat affiché sur l\'écran principal', texteEgalite = 'Égalité — personne ne marque de points.',
-  autoDemarrer = false, onTermine, onResultat,
+  autoDemarrer = false, votantsEligibles, onTermine, onResultat,
 }) {
   const [etape, setEtape] = useState(autoDemarrer ? 'ouvert' : 'avant'); // avant | ouvert | resultat
   const [tempsRestant, setTempsRestant] = useState(duree);
   const intervalRef = useRef(null);
   const idRef = useRef(0);
-  const nomsConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
+  const nomsConnectes = votantsEligibles || remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
 
   const demarrer = () => {
     remote.resetActions();
     idRef.current = Date.now();
     setTempsRestant(duree);
     setEtape('ouvert');
-    remote.envoyerAction({ prim: 'qcm', etape: 'demarrer', question, options, id: idRef.current });
+    const payload = { prim: 'qcm', etape: 'demarrer', question, options, id: idRef.current };
+    if (votantsEligibles) {
+      remote.envoyerActionPrivee(Object.fromEntries(votantsEligibles.map((n) => [n, payload])));
+    } else {
+      remote.envoyerAction(payload);
+    }
     intervalRef.current = setInterval(() => setTempsRestant((t) => (t <= 1 ? 0 : t - 1)), 1000);
   };
 

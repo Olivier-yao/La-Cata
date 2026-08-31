@@ -10,8 +10,6 @@ import ParisScreen from './ParisScreen.jsx';
 import VoteGraduee from '../components/vote/VoteGraduee.jsx';
 import VoteGradueeMultiple from '../components/vote/VoteGradueeMultiple.jsx';
 import VoteGradueeRemoteHost from '../components/vote/VoteGradueeRemoteHost.jsx';
-import VoteBinaire from '../components/vote/VoteBinaire.jsx';
-import VoteBinaireRemoteHost from '../components/vote/VoteBinaireRemoteHost.jsx';
 import VoteVraiFaux from '../components/vote/VoteVraiFaux.jsx';
 import VoteVraiFauxRemoteHost from '../components/vote/VoteVraiFauxRemoteHost.jsx';
 
@@ -94,9 +92,9 @@ const COMPOSANTS_PAR_JEU = {
 const JEUX_SCORE_COLLECTIF = ['conversation', 'mot-surprise', 'histoire-plusieurs-voix'];
 
 // Mini-jeux "groupe" où tout le cast reçoit le même verdict (Speed Dating :
-// l'alchimie se juge à deux ; Procès Fictif : le verdict s'applique à
-// l'accusé et aux deux avocats).
-const JEUX_SCORE_GROUPE_IDENTIQUE = ['speed-dating-improbable', 'proces-fictif'];
+// l'alchimie se juge à deux). Procès Fictif gère désormais son propre
+// verdict en interne (voteType 'aucun', voir ProcesFictif.jsx).
+const JEUX_SCORE_GROUPE_IDENTIQUE = ['speed-dating-improbable'];
 
 export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
   const totalManches = joueurs.length * 3;
@@ -430,33 +428,6 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
             bonusDisponible={!bonusUtilise}
             onBonus={surBonus}
           />
-        </div>
-      );
-    }
-    if (jeuCourant.voteType === 'binaire') {
-      const estProces = jeuCourant.id === 'proces-fictif';
-      const question = estProces ? 'Le verdict de la table ?' : `${joueurActuel} a-t-il/elle craqué ?`;
-      const optionA = estProces ? { label: 'Non coupable', points: 4 } : { label: 'Tenu jusqu\'au bout', points: 4 };
-      const optionB = estProces ? { label: 'Coupable', points: 1 } : { label: 'A craqué', points: 0 };
-      if (remote.actif && remote.nbConnectes > 0) {
-        return (
-          <div className="stage">
-            <VoteBinaireRemoteHost
-              question={question}
-              optionA={optionA}
-              optionB={optionB}
-              joueurs={joueurs}
-              connectes={remote.connectes}
-              votesRecus={remote.votesRecus}
-              onDemarrerVote={remote.demarrerVote}
-              onVote={onVoteGenerique}
-            />
-          </div>
-        );
-      }
-      return (
-        <div className="stage">
-          <VoteBinaire question={question} optionA={optionA} optionB={optionB} onVote={onVoteGenerique} />
         </div>
       );
     }

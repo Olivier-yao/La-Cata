@@ -3,7 +3,6 @@ import { creerPickerAleatoire } from '../lib/randomSansRepeat.js';
 // games.js — Registre des mini-jeux disponibles.
 // `voteType` détermine quel écran de vote suit la manche :
 // - 'graduee'    : trois cartes de points (1 / 3 / 6)
-// - 'binaire'    : deux issues (Sans Rire)
 // - 'vraifaux'   : verdict vrai/bidon (Le Menteur)
 // - 'aucun'      : pas d'écran de vote après — le jeu calcule lui-même ses
 //   points (Calcul Éclair) ou n'en distribue pas (Statue Surprise gère son
@@ -86,9 +85,10 @@ export const GAMES = [
   {
     id: 'proces-fictif',
     nom: 'Procès Fictif',
-    voteType: 'binaire',
+    voteType: 'aucun',
     groupe: true,
-    regles: "Un joueur est accusé d'un fait absurde tiré au sort, deux autres joueurs plaident comme avocats. Après les plaidoiries, la table rend son verdict : coupable ou non coupable.",
+    manette: true,
+    regles: "Un accusé et deux avocats sont tirés au sort parmi les téléphones connectés. L'avocat de la défense reçoit trois preuves privées qu'il révèle quand il le souhaite (irréversible). Le reste des joueurs forme le jury et vote coupable ou non coupable sur son téléphone, en ne voyant que les preuves révélées.",
   },
   {
     id: 'emission-tele-achat',
