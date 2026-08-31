@@ -20,6 +20,20 @@ const CARTES_DEFAUT = [
   { points: 6, titre: 'Légendaire' },
 ];
 
+// Petites phrases qui tournent sur l'écran d'attente — sans ça, un
+// téléphone qui ne sert à rien pendant 3-4 minutes d'affilée (le gros de
+// l'action se joue sur l'écran principal) a l'air complètement mort.
+const PHRASES_ATTENTE = [
+  'Fais style que tu regardes l\'écran...',
+  'Prépare ton meilleur regard de circonstance.',
+  'Le sort choisit sa prochaine victime...',
+  'Reste discret·e, ça peut retomber sur toi.',
+  'Ton téléphone est calme. Ça ne va pas durer.',
+  'Respire. Tout va bien. Pour l\'instant.',
+  'Quelqu\'un, quelque part, prépare un gage pour toi.',
+  'Ne lâche pas ton téléphone, on ne sait jamais.',
+];
+
 export default function ManetteScreen() {
   const [code, setCode] = useState(paramsUrl().code);
   const [nom, setNom] = useState('');
@@ -31,7 +45,13 @@ export default function ManetteScreen() {
   const [contexte, setContexte] = useState(null); // { jeu, joueur }
   const [scores, setScores] = useState({});
   const [actionPayload, setActionPayload] = useState(null);
+  const [phraseIndex, setPhraseIndex] = useState(0);
   const connexionRef = useRef(null);
+
+  useEffect(() => {
+    const intervalle = setInterval(() => setPhraseIndex((i) => (i + 1) % PHRASES_ATTENTE.length), 3600);
+    return () => clearInterval(intervalle);
+  }, []);
 
   useEffect(() => () => connexionRef.current && connexionRef.current.fermer(), []);
 
@@ -188,12 +208,18 @@ export default function ManetteScreen() {
   return (
     <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: 0 }}>
       <div className="stripes-bg" />
-      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, padding: 30, textAlign: 'center' }}>
-        <div style={{ width: 90, height: 90, borderRadius: 999, background: couleur.bg, color: couleur.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: 34 }}>
-          {nom.charAt(0).toUpperCase()}
+      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 30, textAlign: 'center', animation: 'lc-cardin 320ms ease-out both' }}>
+        <div style={{ position: 'relative', width: 100, height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: 999, border: `3px solid ${couleur.bg}`, animation: 'lc-pulse-ring 2.4s ease-in-out infinite' }} />
+          <div style={{ width: 90, height: 90, borderRadius: 999, background: couleur.bg, color: couleur.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: 34, boxShadow: 'var(--shadow-hard-sm)' }}>
+            {nom.charAt(0).toUpperCase()}
+          </div>
         </div>
-        <div className="display-title" style={{ fontSize: 22 }}>{nom}</div>
-        <p style={{ color: 'var(--text-muted)' }}>Connecté·e. En attente du prochain vote...</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 9, height: 9, borderRadius: 999, background: 'var(--accent-lime)', animation: 'lc-blink 1.8s ease-in-out infinite' }} />
+          <div className="display-title" style={{ fontSize: 22 }}>{nom}</div>
+        </div>
+        <p key={phraseIndex} style={{ color: 'var(--text-muted)', minHeight: 22, animation: 'lc-letterin 300ms ease-out both' }}>{PHRASES_ATTENTE[phraseIndex]}</p>
         {contexte?.jeu && (
           <p style={{ color: 'var(--text-dim)', fontSize: 14, maxWidth: 280 }}>
             {contexte.joueur === nom
