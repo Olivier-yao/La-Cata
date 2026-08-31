@@ -27,9 +27,9 @@ import Avatar from '../components/Avatar.jsx';
 export default function QcmHost({
   remote, question, consigne, options, duree = 12, modeScoring = 'majorite', bonneReponse, pointsGagnant = 6,
   texteReussite = 'BIEN VU !', texteEchec = 'Résultat affiché sur l\'écran principal', texteEgalite = 'Égalité — personne ne marque de points.',
-  onTermine, onResultat,
+  autoDemarrer = false, onTermine, onResultat,
 }) {
-  const [etape, setEtape] = useState('avant'); // avant | ouvert | resultat
+  const [etape, setEtape] = useState(autoDemarrer ? 'ouvert' : 'avant'); // avant | ouvert | resultat
   const [tempsRestant, setTempsRestant] = useState(duree);
   const intervalRef = useRef(null);
   const idRef = useRef(0);
@@ -43,6 +43,11 @@ export default function QcmHost({
     remote.envoyerAction({ prim: 'qcm', etape: 'demarrer', question, options, id: idRef.current });
     intervalRef.current = setInterval(() => setTempsRestant((t) => (t <= 1 ? 0 : t - 1)), 1000);
   };
+
+  useEffect(() => {
+    if (autoDemarrer) demarrer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const choix = {}; // nom -> index
   Object.entries(remote.actionsRecues).forEach(([nom, payload]) => {
