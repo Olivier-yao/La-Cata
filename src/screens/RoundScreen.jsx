@@ -388,6 +388,7 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
         modeAuto={modeAuto}
         onQuitterAuto={quitterModeAuto}
         resultat={donneesManche?.resultat}
+        remote={remote}
       />
     );
   }

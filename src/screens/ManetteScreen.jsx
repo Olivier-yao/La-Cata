@@ -165,7 +165,7 @@ export default function ManetteScreen() {
   if (phase === 'jeu') {
     const ComposantManette = COMPOSANTS_MANETTE_PAR_PRIM[actionPayload?.prim];
     if (!ComposantManette) return null;
-    return <ComposantManette payload={actionPayload} onAction={envoyerAction} nom={nom} couleur={couleur} />;
+    return <ComposantManette payload={actionPayload} onAction={envoyerAction} nom={nom} couleur={couleur} scores={scores} />;
   }
 
   if (phase === 'vote') {
