@@ -60,6 +60,7 @@ export const FAMILLE_PAR_JEU = {
   'chrono-aveugle': 'manette-party',
   'chaise-musicale-numerique': 'manette-party',
   'marche-noir': 'manette-party',
+  'dessine-et-devine': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 

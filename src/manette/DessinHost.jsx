@@ -5,9 +5,15 @@ import React, { useEffect, useRef, useState } from 'react';
 // en direct sur le canvas partagé de l'écran principal, qui n'est jamais
 // effacé entre deux tours (Cadavre Exquis Numérique). Le tracé de chacun
 // arrive via `remote.actionsRecues[artiste]`, un point à la fois.
+//
+// `demanderJugement` (avec `nbArtistes=1`) ajoute une étape de jugement
+// après le dessin : l'hôte coche à voix haute qui a deviné juste (Dessine
+// et Devine) — l'artiste gagne un bonus selon le nombre de bonnes
+// réponses, chaque bon devineur gagne aussi des points.
 
-export default function DessinHost({ remote, dureeParTour = 18, consigne, nbArtistes, onTermine }) {
-  const [etape, setEtape] = useState('avant'); // avant | tour | fin
+export default function DessinHost({ remote, dureeParTour = 18, consigne, consigneArtiste, nbArtistes, demanderJugement = false, onTermine }) {
+  const [etape, setEtape] = useState('avant'); // avant | tour | fin | jugement
+  const [devineurs, setDevineurs] = useState(new Set());
   const [ordre, setOrdre] = useState([]);
   const [tourIndex, setTourIndex] = useState(0);
   const [tempsRestant, setTempsRestant] = useState(dureeParTour);
@@ -24,7 +30,7 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, nbArti
     remote.resetActions();
     setTempsRestant(dureeParTour);
     remote.envoyerAction({ prim: 'dessin', etape: 'spectateur', artiste });
-    remote.envoyerActionPrivee({ [artiste]: { prim: 'dessin', etape: 'demarrer', consigne } });
+    remote.envoyerActionPrivee({ [artiste]: { prim: 'dessin', etape: 'demarrer', consigne: consigneArtiste || consigne } });
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => setTempsRestant((t) => (t <= 1 ? 0 : t - 1)), 1000);
   };
@@ -87,9 +93,28 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, nbArti
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remote.actionsRecues, artisteActuel]);
 
+  const artiste = ordre[0];
+  const autresJoueurs = remote.connectes.filter((j) => j.connecte && j.nom !== artiste).map((j) => j.nom);
+
   const terminer = () => {
+    if (demanderJugement) { setEtape('jugement'); return; }
     const scores = {};
     ordre.forEach((nom) => { scores[nom] = 3; });
+    onTermine(scores);
+  };
+
+  const basculerDevineur = (nom) => {
+    setDevineurs((prev) => {
+      const suivant = new Set(prev);
+      if (suivant.has(nom)) suivant.delete(nom); else suivant.add(nom);
+      return suivant;
+    });
+  };
+
+  const validerJugement = () => {
+    const scores = {};
+    devineurs.forEach((nom) => { scores[nom] = 3; });
+    if (artiste) scores[artiste] = devineurs.size > 0 ? devineurs.size * 2 : 1;
     onTermine(scores);
   };
 
@@ -113,7 +138,29 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, nbArti
       )}
 
       {etape === 'fin' && (
-        <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={terminer}>Admirer et valider</button>
+        <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={terminer}>{demanderJugement ? 'Qui a deviné juste ?' : 'Admirer et valider'}</button>
+      )}
+
+      {etape === 'jugement' && (
+        <>
+          <div className="display-title" style={{ fontSize: 16, color: 'var(--accent-yellow)' }}>QUI A DEVINÉ JUSTE À VOIX HAUTE ?</div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {autresJoueurs.map((nom) => {
+              const coche = devineurs.has(nom);
+              return (
+                <button
+                  key={nom}
+                  onClick={() => basculerDevineur(nom)}
+                  className="btn"
+                  style={{ padding: '12px 20px', fontSize: 15, background: coche ? 'var(--accent-lime)' : 'var(--bg-panel-raised)', color: coche ? 'var(--outline)' : 'var(--text-primary)', border: '3px solid var(--outline)' }}
+                >
+                  {coche ? '✓ ' : ''}{nom}
+                </button>
+              );
+            })}
+          </div>
+          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={validerJugement}>Valider les points</button>
+        </>
       )}
     </div>
   );

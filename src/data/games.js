@@ -312,6 +312,14 @@ export const GAMES = [
     manette: true,
     regles: "Un objet mystère est à vendre, sans aucun indice de valeur. Chacun mise ce qu'il veut sur son téléphone, en secret — la plus grosse mise remporte l'objet, mais paie le prix fort si elle est trop haute.",
   },
+  {
+    id: 'dessine-et-devine',
+    nom: 'Dessine et Devine',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un·e artiste tiré·e au sort reçoit un mot secret sur son téléphone et le dessine dessus — le trait apparaît en direct sur l'écran principal. Les autres devinent à voix haute ; l'hôte coche ensuite qui a trouvé.",
+  },
 ];
 
 export const jeuAleatoire = creerPickerAleatoire(GAMES);

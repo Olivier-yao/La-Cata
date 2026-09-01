@@ -64,4 +64,5 @@ export const STYLE_PAR_JEU = {
   'chrono-aveugle': { Icone: IconChrono, bg: 'var(--accent-magenta)', couleur: 'var(--accent-magenta)' },
   'chaise-musicale-numerique': { Icone: IconCorde, bg: 'var(--bg-deep)', couleur: 'var(--accent-magenta)', contour: 'var(--accent-magenta)' },
   'marche-noir': { Icone: IconCamembertVote, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
+  'dessine-et-devine': { Icone: IconCrayonTactile, bg: 'var(--accent-cyan)', couleur: 'var(--accent-cyan)' },
 };
