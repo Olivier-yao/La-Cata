@@ -18,11 +18,14 @@ export default function CourseDoigtsHost({ remote, onTermine }) {
   const debutRef = useRef(Date.now());
   const arriveesRef = useRef({}); // nom -> tempsMs
   const termineRef = useRef(false);
-  const joueursConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
+  // Figé une fois pour toutes au lancement de la manche : un flottement
+  // passager de connexion (WS qui se stabilise) ne doit jamais faire
+  // croire que "tout le monde est arrivé" alors qu'un coureur manque.
+  const [joueursConnectes] = useState(() => remote.connectes.filter((j) => j.connecte).map((j) => j.nom));
 
   useEffect(() => {
     remote.resetActions();
-    remote.envoyerAction({ prim: 'mash', etape: 'demarrer', id: idRef.current });
+    remote.envoyerAction({ prim: 'course-doigts', etape: 'demarrer', cible: DISTANCE_CIBLE, id: idRef.current });
     const interval = setInterval(() => forceRender((n) => n + 1), 150);
     const plafond = setTimeout(() => finir(), PLAFOND_SECURITE);
     return () => { clearInterval(interval); clearTimeout(plafond); };
@@ -45,7 +48,7 @@ export default function CourseDoigtsHost({ remote, onTermine }) {
   const finir = () => {
     if (termineRef.current) return;
     termineRef.current = true;
-    remote.envoyerAction({ prim: 'mash', etape: 'fin', id: idRef.current });
+    remote.envoyerAction({ prim: 'course-doigts', etape: 'fin', id: idRef.current });
     const classement = joueursConnectes
       .map((nom) => ({ nom, arrive: arriveesRef.current[nom] != null, temps: arriveesRef.current[nom], distance: totaux[nom] || 0 }))
       .sort((a, b) => {
