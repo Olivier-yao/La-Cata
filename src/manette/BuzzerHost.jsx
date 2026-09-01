@@ -155,7 +155,11 @@ export default function BuzzerHost({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '44px 24px', textAlign: 'center' }}>
       {consigne && <p style={{ color: 'var(--text-muted)', maxWidth: 480, fontSize: 17 }}>{consigne}</p>}
-      {enfants}
+      {enfants && (
+        <div style={{ filter: etape === 'repondre' ? 'blur(10px)' : 'none', transition: 'filter .3s ease' }}>
+          {enfants}
+        </div>
+      )}
 
       {etape === 'avant' && !auto && (
         <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={() => demarrer()}>{boutonLabel}</button>
