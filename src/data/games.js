@@ -286,7 +286,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Un temps secret est fixé, personne ne voit de chrono nulle part. Chacun appuie STOP sur son téléphone quand il pense que le temps est écoulé — le plus proche du temps secret gagne, dépasser coûte plus cher que s'arrêter trop tôt.",
+    regles: "Un temps cible s'affiche à l'écran (par exemple 7,40s), mais aucun chrono ne tourne nulle part pour le mesurer. Chacun appuie STOP sur son téléphone quand il pense l'avoir atteint — le plus proche gagne, dépasser coûte plus cher que s'arrêter trop tôt.",
   },
   {
     id: 'dessine-et-devine',

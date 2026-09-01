@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// ChronoAveugleHost — un chrono invisible tourne, chacun a un seul appui
-// "STOP" sur son téléphone (réutilise BuzzerPhone tel quel, comme
-// RouletteHost). Personne ne voit le temps qui passe : c'est une pure
-// épreuve de sens du temps, sans aucun repère visuel — le plus proche de
-// l'objectif secret l'emporte, dépasser coûte plus cher que d'être en
-// dessous.
+// ChronoAveugleHost — le temps cible est affiché en clair sur l'écran
+// principal, mais aucun chrono ne tourne nulle part pour le mesurer :
+// chacun doit compter dans sa tête et appuyer "STOP" sur son téléphone
+// (réutilise BuzzerPhone tel quel, comme RouletteHost) au moment où il
+// pense avoir atteint ce temps. Le plus proche l'emporte, dépasser coûte
+// plus cher que d'être en dessous.
 
 const DUREE_MAX = 16; // secondes, fenêtre d'appui la plus longue possible
 
@@ -26,7 +26,7 @@ export default function ChronoAveugleHost({ remote, onTermine }) {
     idRef.current = Date.now();
     debutRef.current = idRef.current;
     setEtape('ouvert');
-    remote.envoyerAction({ prim: 'buzzer', etape: 'ouvert', consigne: 'Appuie quand tu penses que le temps secret est écoulé.', id: idRef.current });
+    remote.envoyerAction({ prim: 'buzzer', etape: 'ouvert', consigne: `Appuie quand tu penses avoir atteint ${objectif.toFixed(2)}s — sans chrono pour t'aider.`, id: idRef.current });
     timeoutRef.current = setTimeout(() => setEtape('resultat'), DUREE_MAX * 1000);
   };
 
@@ -78,14 +78,15 @@ export default function ChronoAveugleHost({ remote, onTermine }) {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '40px 24px', textAlign: 'center' }}>
       {etape === 'ouvert' && (
         <>
-          <div className="display-title" style={{ fontSize: 40, color: 'var(--accent-magenta)', animation: 'lc-wobble 1s ease-in-out infinite' }}>⏱️ ???</div>
+          <p style={{ color: 'var(--text-dim)', fontSize: 14 }}>Aucun chrono à l'écran — comptez dans votre tête et visez :</p>
+          <div className="display-title" style={{ fontSize: 48, color: 'var(--accent-magenta)', animation: 'lc-wobble 1s ease-in-out infinite' }}>{objectif.toFixed(2)}s</div>
           <p style={{ color: 'var(--text-dim)' }}>{Object.keys(resultats).length} / {joueursConnectes.length} ont déjà appuyé</p>
         </>
       )}
 
       {etape === 'resultat' && (
         <>
-          <div className="display-title" style={{ fontSize: 18, color: 'var(--text-dim)' }}>LE TEMPS SECRET ÉTAIT <span style={{ color: 'var(--accent-lime)' }}>{objectif.toFixed(2)}s</span></div>
+          <div className="display-title" style={{ fontSize: 18, color: 'var(--text-dim)' }}>IL FALLAIT VISER <span style={{ color: 'var(--accent-lime)' }}>{objectif.toFixed(2)}s</span></div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 380 }}>
             {classement.map(({ nom, tempsSec, ecart }, i) => (
               <div key={nom} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderRadius: 12, background: i === 0 ? 'var(--accent-lime)' : 'var(--bg-panel-raised)', color: i === 0 ? 'var(--outline)' : 'var(--text-primary)' }}>
