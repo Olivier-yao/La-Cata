@@ -96,6 +96,11 @@ const JEUX_SCORE_COLLECTIF = ['conversation', 'mot-surprise', 'histoire-plusieur
 // verdict en interne (voteType 'aucun', voir ProcesFictif.jsx).
 const JEUX_SCORE_GROUPE_IDENTIQUE = ['speed-dating-improbable'];
 
+// Proposé au vote sur les téléphones entre deux manches (voir
+// ScoreboardScreen) : uniquement des mini-jeux Manette Party, jamais les
+// jeux qui tournent joueur par joueur.
+const JEUX_MANETTE = GAMES.filter((g) => g.manette).map((g) => ({ id: g.id, nom: g.nom }));
+
 export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
   const totalManches = joueurs.length * 3;
 
@@ -160,6 +165,16 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
     // toujours au moins deux options ici.
     setJoueursRestants([...joueurs]);
     setPhase('choix-joueur');
+  };
+
+  // Lancement automatique depuis le vote des téléphones entre deux
+  // manches (ScoreboardScreen) : va droit à la manche, sans repasser par
+  // le choix manuel ni l'écran des règles — comme le mode auto.
+  const lancerJeuAuto = (jeuId) => {
+    const jeu = GAMES.find((g) => g.id === jeuId);
+    if (!jeu) return;
+    setMancheNumero((n) => n + 1);
+    demarrerCycle(jeu, 1);
   };
 
   const choisirJoueur = (nom) => {
@@ -389,6 +404,9 @@ export default function RoundScreen({ joueurs, remote, onNouvelleSoiree }) {
         onQuitterAuto={quitterModeAuto}
         resultat={donneesManche?.resultat}
         remote={remote}
+        jeuxManette={JEUX_MANETTE}
+        onAutoLancer={lancerJeuAuto}
+        manchesRestantesMemeJeu={jeuCourant?.groupe ? manchesRestantesMemeJeu : 1}
       />
     );
   }

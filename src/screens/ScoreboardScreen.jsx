@@ -1,37 +1,92 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Avatar from '../components/Avatar.jsx';
 
 // ScoreboardScreen — "Tableau des scores", plein écran entre deux manches
 // (kit, écran 14). Le meneur ressort en citron-vert plein avec ombre
 // magenta ; les autres lignes restent en surface sombre.
 //
-// Quand la manette est active, chaque téléphone reçoit un bouton "JE SUIS
-// PRÊT·E" (PretPhone) : l'écran principal compte qui a déjà répondu et
-// fait pulser "Manche suivante" dès que la majorité est là — jamais un
-// verrou, l'hôte peut lancer la manche à tout moment, y compris avant.
+// Quand la manette est active, chaque téléphone reçoit la liste des
+// mini-jeux Manette Party à voter (VoteJeuPhone) : voter vaut "prêt", pas
+// besoin d'un geste séparé. Après 10s (ou plus tôt si tout le monde a
+// voté), le jeu le plus voté est lancé automatiquement — égalité
+// départagée au hasard parmi les meilleurs. L'hôte garde la main : un
+// clic sur "Manche suivante" annule le vote en cours et repasse par le
+// choix manuel classique.
 
-export default function ScoreboardScreen({ joueurs, scores, manche, totalManches, onMancheSuivante, onTerminer, modeAuto, onQuitterAuto, resultat, remote }) {
+const DUREE_VOTE = 10;
+
+export default function ScoreboardScreen({
+  joueurs, scores, manche, totalManches, onMancheSuivante, onTerminer, modeAuto, onQuitterAuto,
+  resultat, remote, jeuxManette, onAutoLancer, manchesRestantesMemeJeu = 1,
+}) {
   const idRef = useRef(Date.now());
+  const [tempsRestant, setTempsRestant] = useState(DUREE_VOTE);
+  const [annule, setAnnule] = useState(false);
+  const intervalRef = useRef(null);
+  const gagnantRef = useRef(null);
+
+  const nomsConnectes = remote?.actif ? remote.connectes.filter((j) => j.connecte).map((j) => j.nom) : [];
+  // Le mode auto a déjà son propre tirage au sort (voir demarrerModeAuto) :
+  // pas question de le faire courir en parallèle du vote des téléphones.
+  const voteActif = remote?.actif && !modeAuto && manchesRestantesMemeJeu <= 1 && nomsConnectes.length > 0 && (jeuxManette?.length || 0) > 0 && !annule;
 
   useEffect(() => {
-    if (!remote?.actif) return;
+    if (!voteActif) return undefined;
     idRef.current = Date.now();
     remote.resetActions();
-    remote.envoyerAction({ prim: 'pret', id: idRef.current });
+    remote.envoyerAction({ prim: 'vote-jeu', etape: 'ouvert', jeux: jeuxManette, id: idRef.current });
+    intervalRef.current = setInterval(() => setTempsRestant((t) => (t <= 1 ? 0 : t - 1)), 1000);
+    return () => clearInterval(intervalRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const votes = {}; // nom -> jeuId
+  if (voteActif) {
+    Object.entries(remote.actionsRecues).forEach(([nom, payload]) => {
+      if (payload?.prim === 'vote-jeu' && payload.id === idRef.current) votes[nom] = payload.jeuId;
+    });
+  }
+  const nbVotes = Object.keys(votes).length;
+
+  useEffect(() => {
+    if (voteActif && nomsConnectes.length > 0 && nbVotes >= nomsConnectes.length) setTempsRestant(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nbVotes]);
+
+  const tally = {}; // jeuId -> count
+  Object.values(votes).forEach((jeuId) => { tally[jeuId] = (tally[jeuId] || 0) + 1; });
+
+  useEffect(() => {
+    if (!voteActif || tempsRestant !== 0 || gagnantRef.current) return undefined;
+    clearInterval(intervalRef.current);
+    const entrees = Object.entries(tally);
+    let jeuGagnantId;
+    if (entrees.length === 0) {
+      jeuGagnantId = jeuxManette[Math.floor(Math.random() * jeuxManette.length)].id;
+    } else {
+      const max = Math.max(...entrees.map(([, c]) => c));
+      const meilleurs = entrees.filter(([, c]) => c === max).map(([id]) => id);
+      jeuGagnantId = meilleurs[Math.floor(Math.random() * meilleurs.length)];
+    }
+    gagnantRef.current = jeuGagnantId;
+    remote.envoyerAction({ prim: 'vote-jeu', etape: 'fin', id: idRef.current });
+    const t = setTimeout(() => onAutoLancer(jeuGagnantId), 1400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tempsRestant]);
+
+  const annulerVote = () => {
+    setAnnule(true);
+    clearInterval(intervalRef.current);
+    onMancheSuivante();
+  };
+
+  const jeuGagnant = gagnantRef.current && jeuxManette?.find((j) => j.id === gagnantRef.current);
 
   const classement = joueurs
     .map((nom, i) => ({ nom, index: i, points: scores[nom] || 0 }))
     .sort((a, b) => b.points - a.points);
   const max = Math.max(1, classement[0]?.points || 1);
-
-  const nomsConnectes = remote?.actif ? remote.connectes.filter((j) => j.connecte).map((j) => j.nom) : [];
-  const nomsPrets = nomsConnectes.filter((nom) => {
-    const p = remote.actionsRecues[nom];
-    return p?.prim === 'pret' && p.id === idRef.current;
-  });
-  const majoriteAtteinte = nomsConnectes.length > 0 && nomsPrets.length >= Math.ceil(nomsConnectes.length / 2);
 
   return (
     <div className="stage" style={{ padding: '40px 44px', display: 'flex', flexDirection: 'column', gap: 26 }}>
@@ -53,26 +108,39 @@ export default function ScoreboardScreen({ joueurs, scores, manche, totalManches
         </div>
       )}
 
-      {nomsConnectes.length > 0 && (
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--bg-panel-raised)', border: '3px solid var(--outline)', borderRadius: 16, padding: '16px 20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span className="display-title" style={{ fontSize: 13, color: 'var(--text-dim)' }}>{nomsPrets.length} / {nomsConnectes.length} PRÊTS</span>
-            {majoriteAtteinte && <span style={{ fontSize: 12, color: 'var(--accent-lime)' }}>majorité atteinte</span>}
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {nomsConnectes.map((nom) => {
-              const pret = nomsPrets.includes(nom);
-              return (
-                <div key={nom} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: pret ? 1 : 0.5 }}>
-                  <Avatar nom={nom} index={joueurs.indexOf(nom)} taille={34} contour={pret ? 'var(--accent-lime)' : undefined} />
-                  <span style={{ fontSize: 10, color: pret ? 'var(--accent-lime)' : 'var(--text-dim)' }}>{pret ? 'prêt·e' : 'attend'}</span>
+      {voteActif && (
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 12, background: 'var(--bg-panel-raised)', border: '3px solid var(--accent-cyan)', borderRadius: 16, padding: '16px 20px' }}>
+          {jeuGagnant ? (
+            <div style={{ textAlign: 'center' }}>
+              <span className="display-title" style={{ fontSize: 18, color: 'var(--accent-lime)' }}>🎉 {jeuGagnant.nom} lancé dans un instant !</span>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="display-title" style={{ fontSize: 13, color: 'var(--accent-cyan)' }}>CHOIX DU PROCHAIN MINI-JEU · {nbVotes} / {nomsConnectes.length} ONT VOTÉ</span>
+                <span className="display-title" style={{ fontSize: 16, color: 'var(--accent-yellow)' }}>{tempsRestant}s</span>
+              </div>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {nomsConnectes.map((nom) => {
+                  const vote = votes[nom] !== undefined;
+                  return (
+                    <div key={nom} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: vote ? 1 : 0.5 }}>
+                      <Avatar nom={nom} index={joueurs.indexOf(nom)} taille={30} contour={vote ? 'var(--accent-cyan)' : undefined} />
+                      <span style={{ fontSize: 10, color: vote ? 'var(--accent-cyan)' : 'var(--text-dim)' }}>{vote ? 'voté' : 'attend'}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              {Object.keys(tally).length > 0 && (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {Object.entries(tally).sort((a, b) => b[1] - a[1]).map(([jeuId, count]) => (
+                    <span key={jeuId} className="tag">{jeuxManette.find((j) => j.id === jeuId)?.nom || jeuId} · {count}</span>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-          <div style={{ height: 8, borderRadius: 999, background: 'var(--bg-deep)', overflow: 'hidden' }}>
-            <div style={{ width: `${(nomsPrets.length / nomsConnectes.length) * 100}%`, height: '100%', background: 'var(--accent-lime)', transition: 'width .3s' }} />
-          </div>
+              )}
+              <button className="btn btn-secondary" style={{ alignSelf: 'center', fontSize: 12 }} onClick={annulerVote}>Choisir un autre type de jeu à la place</button>
+            </>
+          )}
         </div>
       )}
 
@@ -132,13 +200,9 @@ export default function ScoreboardScreen({ joueurs, scores, manche, totalManches
             </button>
           )}
         </div>
-        <button
-          className="btn btn-lime"
-          style={{ animation: majoriteAtteinte ? 'lc-band 2s ease-in-out infinite' : 'none' }}
-          onClick={onMancheSuivante}
-        >
-          Manche suivante
-        </button>
+        {!voteActif && (
+          <button className="btn btn-lime" onClick={onMancheSuivante}>Manche suivante</button>
+        )}
       </div>
     </div>
   );
