@@ -62,6 +62,10 @@ export const FAMILLE_PAR_JEU = {
   'marche-noir': 'manette-party',
   'dessine-et-devine': 'manette-party',
   'chaud-froid': 'manette-party',
+  'ni-vu-ni-connu': 'manette-party',
+  'guerre-des-watts': 'manette-party',
+  'ames-soeurs': 'manette-party',
+  'vrai-ou-intox': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 

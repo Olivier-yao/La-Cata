@@ -66,4 +66,8 @@ export const STYLE_PAR_JEU = {
   'marche-noir': { Icone: IconCamembertVote, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
   'dessine-et-devine': { Icone: IconCrayonTactile, bg: 'var(--accent-cyan)', couleur: 'var(--accent-cyan)' },
   'chaud-froid': { Icone: IconCalcul, bg: 'var(--bg-deep)', couleur: 'var(--accent-cyan)', contour: 'var(--accent-cyan)' },
+  'ni-vu-ni-connu': { Icone: IconBuzzer, bg: 'var(--bg-deep)', couleur: 'var(--accent-magenta)', contour: 'var(--accent-magenta)' },
+  'guerre-des-watts': { Icone: IconCorde, bg: 'var(--accent-cyan)', couleur: 'var(--accent-cyan)' },
+  'ames-soeurs': { Icone: IconMasque, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
+  'vrai-ou-intox': { Icone: IconCamembertVote, bg: 'var(--accent-lime)', couleur: 'var(--accent-lime)' },
 };

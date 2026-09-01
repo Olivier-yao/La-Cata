@@ -84,6 +84,16 @@ export default function BuzzerPhone({ payload, onAction, nom, couleur, labelBout
   }
 
   if (etat === 'resultat') {
+    if (payload.perdant) {
+      const perdu = payload.gagnant === nom;
+      return (
+        <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30, background: perdu ? 'var(--bg-deep)' : 'var(--accent-lime)' }}>
+          <div className="display-title" style={{ fontSize: 28, color: perdu ? 'var(--accent-magenta)' : 'var(--outline)' }}>
+            {perdu ? 'PERDU… TU AS CRAQUÉ EN PREMIER' : payload.gagnant ? `${payload.gagnant} a craqué en premier, vous gagnez !` : 'Manche annulée'}
+          </div>
+        </div>
+      );
+    }
     const gagne = payload.gagnant === nom;
     return (
       <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', padding: 30, background: gagne ? 'var(--accent-lime)' : 'var(--bg-deep)' }}>

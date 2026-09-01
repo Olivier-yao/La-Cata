@@ -89,12 +89,12 @@ export default function BuzzerHost({
     if (avecQcm) {
       enAttenteReponseRef.current = true;
       setEtape('repondre');
-      remote.envoyerAction({ prim: 'buzzer', etape: 'resultat', gagnant: nom, id: idRef.current });
+      remote.envoyerAction({ prim: 'buzzer', etape: 'resultat', gagnant: nom, perdant, id: idRef.current });
       remote.envoyerActionPrivee({ [nom]: { prim: 'buzzer', etape: 'repondre', question, options, duree: dureeReponse, id: idRef.current } });
       timersRef.current.push(setTimeout(() => traiterReponse(nom, null), dureeReponse * 1000 + 400));
     } else {
       setEtape('resultat');
-      remote.envoyerAction({ prim: 'buzzer', etape: 'resultat', gagnant: nom, id: idRef.current });
+      remote.envoyerAction({ prim: 'buzzer', etape: 'resultat', gagnant: nom, perdant, id: idRef.current });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remote.ordreActions, etape]);

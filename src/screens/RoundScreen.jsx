@@ -54,6 +54,10 @@ import ChaiseMusicale from '../games/ChaiseMusicale.jsx';
 import MarcheNoir from '../games/MarcheNoir.jsx';
 import DessineEtDevine from '../games/DessineEtDevine.jsx';
 import ChaudFroid from '../games/ChaudFroid.jsx';
+import NiVuNiConnu from '../games/NiVuNiConnu.jsx';
+import GuerreDesWatts from '../games/GuerreDesWatts.jsx';
+import AmesSoeurs from '../games/AmesSoeurs.jsx';
+import VraiOuIntox from '../games/VraiOuIntox.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
@@ -97,6 +101,10 @@ const COMPOSANTS_PAR_JEU = {
   'marche-noir': MarcheNoir,
   'dessine-et-devine': DessineEtDevine,
   'chaud-froid': ChaudFroid,
+  'ni-vu-ni-connu': NiVuNiConnu,
+  'guerre-des-watts': GuerreDesWatts,
+  'ames-soeurs': AmesSoeurs,
+  'vrai-ou-intox': VraiOuIntox,
 };
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement

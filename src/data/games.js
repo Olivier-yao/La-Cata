@@ -328,6 +328,38 @@ export const GAMES = [
     manette: true,
     regles: "Un nombre secret entre 1 et 100 se devine en deux manches. La première, à l'aveugle, ne rapporte rien — elle sert juste à révéler si le nombre est plus grand ou plus petit que la moyenne du groupe. La seconde manche, avec cet indice, compte pour de vrai.",
   },
+  {
+    id: 'ni-vu-ni-connu',
+    nom: 'Ni Vu Ni Connu',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Même buzzer automatique et imprévisible que Le Duel du Buzzer, mais la tension est inversée : le premier qui craque et appuie sur son téléphone perd la manche. Un jeu de nerfs, pas de réflexes.",
+  },
+  {
+    id: 'guerre-des-watts',
+    nom: 'Guerre des Watts',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Deux équipes tirées au sort maintiennent leur bouton appuyé sur leur téléphone — leur jauge d'équipe redescend dès qu'on relâche. Première équipe à atteindre l'objectif gagne instantanément, sinon celle qui est devant au bout du chrono.",
+  },
+  {
+    id: 'ames-soeurs',
+    nom: 'Âmes Sœurs',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Deux joueurs tirés au sort apprennent en secret qu'ils forment un duo. Tout le monde vote ensuite sur la même petite question anodine — seul le duo marque des points, et seulement s'il tombe sur la même réponse sans se concerter.",
+  },
+  {
+    id: 'vrai-ou-intox',
+    nom: 'Vrai ou Intox',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Une affirmation surprenante s'affiche. Chacun tranche en secret sur son téléphone : vrai ou intox ? Bonne réponse = points, tout le monde vote en même temps.",
+  },
 ];
 
 export const jeuAleatoire = creerPickerAleatoire(GAMES);
