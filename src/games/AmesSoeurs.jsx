@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RoundHeader from '../components/RoundHeader.jsx';
 import QcmHost from '../manette/QcmHost.jsx';
+import Avatar from '../components/Avatar.jsx';
 import { IconMasque } from '../components/icons.jsx';
 import { promptAmesSoeursAleatoire } from '../data/promptsAmesSoeurs.js';
 
@@ -47,6 +48,36 @@ export default function AmesSoeurs({ manche, remote, onTermine }) {
     onTermine({ scores, resultat: memeChoix ? `${ames[0]} et ${ames[1]} étaient bien des âmes sœurs !` : `${ames[0]} et ${ames[1]} n'étaient pas sur la même longueur d'onde.` });
   };
 
+  // Rendu sur mesure du résultat : les deux âmes sœurs face à face avec
+  // leur choix révélé, plutôt que des barres de pourcentage génériques.
+  const rendreResultat = ({ choix }) => {
+    const iA = choix[ames[0]];
+    const iB = choix[ames[1]];
+    const memeChoix = iA !== undefined && iA === iB;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          {[ames[0], ames[1]].map((nom, i) => {
+            const choixIndex = i === 0 ? iA : iB;
+            return (
+              <div key={nom} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, animation: `lc-cardin 420ms ease-out ${i * 150}ms both` }}>
+                <Avatar nom={nom} taille={54} contour={memeChoix ? 'var(--accent-lime)' : 'var(--accent-magenta)'} />
+                <span className="display-title" style={{ fontSize: 15 }}>{nom}</span>
+                <div className="hard-card" style={{ padding: '10px 16px', fontSize: 13, maxWidth: 200 }}>
+                  {choixIndex != null ? prompt.options[choixIndex] : 'Pas de réponse'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ fontSize: 40, animation: 'lc-wobble .6s ease-in-out infinite' }}>{memeChoix ? '💞' : '💔'}</div>
+        <div className="display-title" style={{ fontSize: 20, color: memeChoix ? 'var(--accent-lime)' : 'var(--accent-magenta)' }}>
+          {memeChoix ? 'MÊME LONGUEUR D\'ONDE !' : 'RATÉ, PAS SUR LA MÊME ONDE'}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="stage" style={{ display: 'flex', flexDirection: 'column' }}>
       <RoundHeader icone={<IconMasque color="var(--outline)" />} iconBg="var(--accent-violet)" titre="Âmes Sœurs" sousTitre={`Manche ${manche}`} couleurTitre="var(--accent-violet)" />
@@ -70,6 +101,7 @@ export default function AmesSoeurs({ manche, remote, onTermine }) {
           texteReussite="MÊME LONGUEUR D'ONDE ?"
           texteEchec="MÊME LONGUEUR D'ONDE ?"
           onResultat={surResultat}
+          resultatPersonnalise={rendreResultat}
           consigne="Chacun vote en secret. Deux âmes sœurs cachées dans la table espèrent tomber sur la même réponse."
         />
       )}

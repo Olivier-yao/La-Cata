@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // JaugeEquipesHost — deux équipes s'affrontent en maintenant leur bouton
-// appuyé (réutilise JaugePhone tel quel) : contrairement à Surchauffe,
-// coopératif, ici c'est une vraie course entre deux jauges qui montent
-// et redescendent en direct — la première équipe à atteindre l'objectif
-// gagne instantanément, sinon celle qui est devant au bout du chrono.
+// appuyé (réutilise JaugePhone tel quel), mais contrairement à une course
+// vers un maximum, l'objectif est de se CALIBRER sur un nombre cible tiré
+// au sort et de rester le plus près possible jusqu'à la fin du chrono —
+// dépasser franchement n'aide pas, il faut doser.
 
-const OBJECTIF = 160;
 const DUREE = 20;
+
+function genererCible() {
+  return 60 + Math.floor(Math.random() * 90); // 60..150
+}
 
 function formerEquipes(noms) {
   const melanges = [...noms].sort(() => Math.random() - 0.5);
@@ -22,6 +25,7 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
   const intervalRef = useRef(null);
   const joueursConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
   const [equipes] = useState(() => formerEquipes(joueursConnectes));
+  const [cible] = useState(genererCible);
 
   useEffect(() => {
     remote.resetActions();
@@ -42,15 +46,6 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
   const totalB = equipes.B.reduce((s, n) => s + (valeurs[n] || 0), 0);
 
   useEffect(() => {
-    if (etape === 'ouvert' && (totalA >= OBJECTIF || totalB >= OBJECTIF)) {
-      clearInterval(intervalRef.current);
-      setEtape('resultat');
-      remote.envoyerAction({ prim: 'jauge', etape: 'fin', id: idRef.current });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalA, totalB]);
-
-  useEffect(() => {
     if (etape === 'ouvert' && tempsRestant === 0) {
       clearInterval(intervalRef.current);
       setEtape('resultat');
@@ -59,13 +54,15 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tempsRestant, etape]);
 
-  const gagnantA = totalA >= totalB;
+  const ecartA = Math.abs(totalA - cible);
+  const ecartB = Math.abs(totalB - cible);
+  const gagnantA = ecartA < ecartB;
+  const egaliteEcarts = ecartA === ecartB;
 
   const valider = () => {
     const scores = {};
-    const egalite = totalA === totalB;
-    equipes.A.forEach((n) => { scores[n] = egalite ? 3 : gagnantA ? 6 : 2; });
-    equipes.B.forEach((n) => { scores[n] = egalite ? 3 : !gagnantA ? 6 : 2; });
+    equipes.A.forEach((n) => { scores[n] = egaliteEcarts ? 3 : gagnantA ? 6 : 2; });
+    equipes.B.forEach((n) => { scores[n] = egaliteEcarts ? 3 : !gagnantA ? 6 : 2; });
     onTermine(scores);
   };
 
@@ -78,16 +75,23 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [etape]);
 
+  const echelleMax = cible * 1.7;
   const barre = (total, couleur) => (
-    <div style={{ position: 'relative', width: 44, height: 180, borderRadius: 999, border: '4px solid var(--outline)', background: 'var(--bg-panel-raised)', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: `${Math.min(100, (total / OBJECTIF) * 100)}%`, background: couleur, transition: 'height .15s linear' }} />
+    <div style={{ position: 'relative', width: 44, height: 180, borderRadius: 999, border: '4px solid var(--outline)', background: 'var(--bg-panel-raised)', overflow: 'visible' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, top: 0, borderRadius: 999, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: `${Math.min(100, (total / echelleMax) * 100)}%`, background: couleur, transition: 'height .15s linear' }} />
+      </div>
+      <div style={{ position: 'absolute', left: -8, right: -8, bottom: `${Math.min(100, (cible / echelleMax) * 100)}%`, height: 3, background: 'var(--accent-yellow)' }} />
     </div>
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '32px 24px', textAlign: 'center' }}>
-      <p style={{ color: 'var(--text-muted)', maxWidth: 460 }}>Deux équipes maintiennent leur bouton appuyé — ça redescend si on relâche. Première équipe à {OBJECTIF} gagne, sinon celle qui est devant au chrono.</p>
-      <div className="display-title" style={{ fontSize: 32, color: 'var(--accent-yellow)' }}>{tempsRestant}s</div>
+      <p style={{ color: 'var(--text-muted)', maxWidth: 460 }}>Deux équipes maintiennent leur bouton appuyé — ça redescend si on relâche. Le trait jaune est la cible : à la fin, l'équipe la plus proche gagne, pas la plus haute.</p>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+        <div className="display-title" style={{ fontSize: 32, color: 'var(--accent-yellow)' }}>{tempsRestant}s</div>
+        <div className="display-title" style={{ fontSize: 16, color: 'var(--text-dim)' }}>CIBLE : {cible}</div>
+      </div>
 
       <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
@@ -106,8 +110,8 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
 
       {etape === 'resultat' && (
         <>
-          <div className="display-title" style={{ fontSize: 22, color: totalA === totalB ? 'var(--accent-yellow)' : 'var(--accent-lime)' }}>
-            {totalA === totalB ? 'Égalité parfaite !' : gagnantA ? 'Équipe magenta gagne !' : 'Équipe cyan gagne !'}
+          <div className="display-title" style={{ fontSize: 22, color: egaliteEcarts ? 'var(--accent-yellow)' : 'var(--accent-lime)' }}>
+            {egaliteEcarts ? 'Égalité parfaite !' : gagnantA ? 'Équipe magenta gagne, plus proche de la cible !' : 'Équipe cyan gagne, plus proche de la cible !'}
           </div>
           <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>

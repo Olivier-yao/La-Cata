@@ -318,7 +318,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Deux équipes tirées au sort maintiennent leur bouton appuyé sur leur téléphone — leur jauge d'équipe redescend dès qu'on relâche. Première équipe à atteindre l'objectif gagne instantanément, sinon celle qui est devant au bout du chrono.",
+    regles: "Deux équipes tirées au sort maintiennent leur bouton appuyé sur leur téléphone — leur jauge d'équipe redescend dès qu'on relâche. Un nombre cible est donné : il faut s'y calibrer et y rester au plus près jusqu'à la fin du chrono, pas juste le dépasser.",
   },
   {
     id: 'ames-soeurs',

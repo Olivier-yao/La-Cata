@@ -30,11 +30,16 @@ import Avatar from '../components/Avatar.jsx';
 // `votantsEligibles` restreint le vote à une liste de prénoms (le reste
 // des téléphones connectés ne reçoit rien) — pour un jury qui vote sans
 // l'accusé ni les avocats, par exemple (Procès Fictif).
+//
+// `resultatPersonnalise({ choix, tally, indexMajoritaire, estEgalite })`
+// remplace l'affichage générique en barres de pourcentage par un rendu sur
+// mesure (Âmes Sœurs, par exemple) — le minuteur et la validation
+// automatique restent inchangés, seul le visuel change.
 
 export default function QcmHost({
   remote, question, consigne, options, duree = 12, modeScoring = 'majorite', bonneReponse, pointsGagnant = 6,
   texteReussite = 'BIEN VU !', texteEchec = 'Raté, tu n\'avais pas la bonne réponse.', texteEgalite = 'Égalité — personne ne marque de points.',
-  autoDemarrer = false, votantsEligibles, onTermine, onResultat,
+  autoDemarrer = false, votantsEligibles, onTermine, onResultat, resultatPersonnalise,
 }) {
   const [etape, setEtape] = useState(autoDemarrer ? 'ouvert' : 'avant'); // avant | ouvert | resultat
   const [tempsRestant, setTempsRestant] = useState(duree);
@@ -155,7 +160,14 @@ export default function QcmHost({
         </>
       )}
 
-      {etape === 'resultat' && (
+      {etape === 'resultat' && resultatPersonnalise && (
+        <>
+          {resultatPersonnalise({ choix, tally, indexMajoritaire, estEgalite })}
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
+        </>
+      )}
+
+      {etape === 'resultat' && !resultatPersonnalise && (
         <>
           {estEgalite && (
             <div className="display-title" style={{ fontSize: 15, color: 'var(--accent-yellow)' }}>
