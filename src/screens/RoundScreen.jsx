@@ -49,7 +49,6 @@ import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
 import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 import CoffreFort from '../games/CoffreFort.jsx';
 import ChronoAveugle from '../games/ChronoAveugle.jsx';
-import MarcheNoir from '../games/MarcheNoir.jsx';
 import DessineEtDevine from '../games/DessineEtDevine.jsx';
 import ChaudFroid from '../games/ChaudFroid.jsx';
 import GuerreDesWatts from '../games/GuerreDesWatts.jsx';
@@ -93,7 +92,6 @@ const COMPOSANTS_PAR_JEU = {
   'croquis-en-direct': CroquisEnDirect,
   'coffre-fort': CoffreFort,
   'chrono-aveugle': ChronoAveugle,
-  'marche-noir': MarcheNoir,
   'dessine-et-devine': DessineEtDevine,
   'chaud-froid': ChaudFroid,
   'guerre-des-watts': GuerreDesWatts,

@@ -57,7 +57,6 @@ export const FAMILLE_PAR_JEU = {
   'emission-tele-achat': 'manette-party',
   'coffre-fort': 'manette-party',
   'chrono-aveugle': 'manette-party',
-  'marche-noir': 'manette-party',
   'dessine-et-devine': 'manette-party',
   'chaud-froid': 'manette-party',
   'guerre-des-watts': 'manette-party',
