@@ -69,6 +69,15 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
     onTermine(scores);
   };
 
+  useEffect(() => {
+    if (etape === 'resultat') {
+      const t = setTimeout(valider, 3000);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
+
   const barre = (total, couleur) => (
     <div style={{ position: 'relative', width: 44, height: 180, borderRadius: 999, border: '4px solid var(--outline)', background: 'var(--bg-panel-raised)', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: `${Math.min(100, (total / OBJECTIF) * 100)}%`, background: couleur, transition: 'height .15s linear' }} />
@@ -100,7 +109,7 @@ export default function JaugeEquipesHost({ remote, onTermine }) {
           <div className="display-title" style={{ fontSize: 22, color: totalA === totalB ? 'var(--accent-yellow)' : 'var(--accent-lime)' }}>
             {totalA === totalB ? 'Égalité parfaite !' : gagnantA ? 'Équipe magenta gagne !' : 'Équipe cyan gagne !'}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>Valider les points</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

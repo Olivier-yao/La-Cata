@@ -42,7 +42,6 @@ import PlusOuMoins from '../games/PlusOuMoins.jsx';
 import LeJustePrixExpress from '../games/LeJustePrixExpress.jsx';
 import VoteDeLaHonte from '../games/VoteDeLaHonte.jsx';
 import SimonDitNumerique from '../games/SimonDitNumerique.jsx';
-import MemoireFlashCollective from '../games/MemoireFlashCollective.jsx';
 import CadavreExquisNumerique from '../games/CadavreExquisNumerique.jsx';
 import LeTraitre from '../games/LeTraitre.jsx';
 import EspionParmiNous from '../games/EspionParmiNous.jsx';
@@ -50,11 +49,9 @@ import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
 import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 import CoffreFort from '../games/CoffreFort.jsx';
 import ChronoAveugle from '../games/ChronoAveugle.jsx';
-import ChaiseMusicale from '../games/ChaiseMusicale.jsx';
 import MarcheNoir from '../games/MarcheNoir.jsx';
 import DessineEtDevine from '../games/DessineEtDevine.jsx';
 import ChaudFroid from '../games/ChaudFroid.jsx';
-import NiVuNiConnu from '../games/NiVuNiConnu.jsx';
 import GuerreDesWatts from '../games/GuerreDesWatts.jsx';
 import AmesSoeurs from '../games/AmesSoeurs.jsx';
 import VraiOuIntox from '../games/VraiOuIntox.jsx';
@@ -89,7 +86,6 @@ const COMPOSANTS_PAR_JEU = {
   'juste-prix-express': LeJustePrixExpress,
   'vote-de-la-honte': VoteDeLaHonte,
   'simon-dit-numerique': SimonDitNumerique,
-  'memoire-flash-collective': MemoireFlashCollective,
   'cadavre-exquis-numerique': CadavreExquisNumerique,
   'le-traitre': LeTraitre,
   'espion-parmi-nous': EspionParmiNous,
@@ -97,11 +93,9 @@ const COMPOSANTS_PAR_JEU = {
   'croquis-en-direct': CroquisEnDirect,
   'coffre-fort': CoffreFort,
   'chrono-aveugle': ChronoAveugle,
-  'chaise-musicale-numerique': ChaiseMusicale,
   'marche-noir': MarcheNoir,
   'dessine-et-devine': DessineEtDevine,
   'chaud-froid': ChaudFroid,
-  'ni-vu-ni-connu': NiVuNiConnu,
   'guerre-des-watts': GuerreDesWatts,
   'ames-soeurs': AmesSoeurs,
   'vrai-ou-intox': VraiOuIntox,

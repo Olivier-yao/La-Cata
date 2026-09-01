@@ -9,8 +9,9 @@ export default function CadavreExquisNumerique({ manche, remote, onTermine }) {
       <RoundHeader icone={<IconCrayonTactile color="var(--outline)" />} iconBg="var(--accent-yellow)" titre="Cadavre Exquis Numérique" sousTitre={`Manche ${manche}`} couleurTitre="var(--accent-yellow)" />
       <DessinHost
         remote={remote}
-        dureeParTour={15}
-        consigne="Chacun dessine à son tour sur son téléphone, en direct sur le dessin collectif ci-dessous. Personne ne sait ce que le résultat final donnera."
+        dureeParTour={25}
+        pointsParDefaut={0}
+        consigne="Chacun dessine à son tour sur son téléphone, en direct sur le dessin collectif ci-dessous. Pas de gagnant ici, juste le plaisir de voir le résultat collectif."
         onTermine={(scores) => onTermine({ scores })}
       />
     </div>

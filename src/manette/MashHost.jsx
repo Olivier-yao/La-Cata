@@ -8,14 +8,14 @@ import Avatar from '../components/Avatar.jsx';
 // objectif au lieu de départager les joueurs entre eux.
 //
 // `autoDemarrer` (secondes) : démarre tout seul après un compte à rebours,
-// sans bouton "Lancer". `autoValider` : applique les points tout seul
+// sans bouton "Lancer". Les points sont toujours appliqués tout seuls
 // quelques secondes après le résultat, sans bouton "Valider". `visuel`
 // ('corde' | 'trone') : remplace l'affichage générique par une mise en
 // scène dédiée pendant la partie ET le résultat.
 
 export default function MashHost({
   remote, mode = 'ffa', equipes, spectateurs = [], cooperatif = false, objectif = 80,
-  duree = 8, consigne, autoDemarrer = null, autoValider = false, visuel, onTermine,
+  duree = 8, consigne, autoDemarrer = null, visuel, onTermine,
 }) {
   const [etape, setEtape] = useState(autoDemarrer ? 'compte-a-rebours' : 'avant');
   const [avantCompte, setAvantCompte] = useState(autoDemarrer || 0);
@@ -124,13 +124,13 @@ export default function MashHost({
   }
 
   useEffect(() => {
-    if (etape === 'resultat' && autoValider) {
+    if (etape === 'resultat') {
       const t = setTimeout(() => onTermine(scoresAAppliquer), 3000);
       return () => clearTimeout(t);
     }
     return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [etape, autoValider]);
+  }, [etape]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '44px 24px', textAlign: 'center' }}>
@@ -164,11 +164,7 @@ export default function MashHost({
       {etape === 'resultat' && (
         <>
           {contenuResultat}
-          {autoValider ? (
-            <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
-          ) : (
-            <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={() => onTermine(scoresAAppliquer)}>Valider les points</button>
-          )}
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

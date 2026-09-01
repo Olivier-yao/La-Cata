@@ -14,7 +14,7 @@ function genererObjectif() {
 }
 
 export default function ChronoAveugleHost({ remote, onTermine }) {
-  const [etape, setEtape] = useState('avant'); // avant | ouvert | resultat
+  const [etape, setEtape] = useState('ouvert'); // ouvert | resultat
   const [objectif] = useState(genererObjectif);
   const debutRef = useRef(0);
   const idRef = useRef(0);
@@ -30,7 +30,7 @@ export default function ChronoAveugleHost({ remote, onTermine }) {
     timeoutRef.current = setTimeout(() => setEtape('resultat'), DUREE_MAX * 1000);
   };
 
-  useEffect(() => () => clearTimeout(timeoutRef.current), []);
+  useEffect(() => { demarrer(); return () => clearTimeout(timeoutRef.current); }, []);
 
   const resultats = {}; // nom -> { tempsSec, ecart, aTemps }
   Object.entries(remote.actionsRecues).forEach(([nom, payload]) => {
@@ -65,15 +65,17 @@ export default function ChronoAveugleHost({ remote, onTermine }) {
     onTermine(scores);
   };
 
+  useEffect(() => {
+    if (etape === 'resultat') {
+      const t = setTimeout(valider, 3000);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '40px 24px', textAlign: 'center' }}>
-      {etape === 'avant' && (
-        <>
-          <p style={{ color: 'var(--text-muted)', maxWidth: 440 }}>Un temps secret est fixé. Personne ne voit de chrono, ni sur l'écran ni sur le téléphone — au signal, chacun appuie STOP quand il pense que le temps est écoulé. Le plus proche gagne.</p>
-          <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={demarrer}>Démarrer le chrono secret</button>
-        </>
-      )}
-
       {etape === 'ouvert' && (
         <>
           <div className="display-title" style={{ fontSize: 40, color: 'var(--accent-magenta)', animation: 'lc-wobble 1s ease-in-out infinite' }}>⏱️ ???</div>
@@ -98,7 +100,7 @@ export default function ChronoAveugleHost({ remote, onTermine }) {
               </div>
             ))}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>Valider les points</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

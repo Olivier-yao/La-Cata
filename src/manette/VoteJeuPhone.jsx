@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { STYLE_PAR_JEU } from '../lib/styleJeux.js';
 
 // VoteJeuPhone — entre deux manches, chaque téléphone propose la liste
 // des mini-jeux Manette Party : voter POUR un jeu vaut aussi "je suis
 // prêt·e", pas besoin d'un bouton séparé. Un seul choix, pas de retour
-// (comme QcmPhone) — voir ScoreboardScreen pour le dépouillement.
+// (comme QcmPhone) — voir ScoreboardScreen pour le dépouillement. Chaque
+// jeu garde son icône et sa couleur de l'écran de choix classique, pour
+// rester reconnaissable même dans cette liste compacte.
 
 export default function VoteJeuPhone({ payload, onAction }) {
   const [etat, setEtat] = useState('attente'); // attente | ouvert | envoye
@@ -48,17 +51,31 @@ export default function VoteJeuPhone({ payload, onAction }) {
     <div className="stage" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: 14, padding: '26px 20px' }}>
       <div className="display-title" style={{ fontSize: 15, textAlign: 'center', color: 'var(--accent-yellow)' }}>CHOISIS LE PROCHAIN MINI-JEU</div>
       <p style={{ fontSize: 12, color: 'var(--text-dim)', textAlign: 'center' }}>Le plus voté sera lancé automatiquement dans quelques secondes.</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
-        {(payload?.jeux || []).map((jeu) => (
-          <button
-            key={jeu.id}
-            onClick={() => voter(jeu)}
-            className="btn"
-            style={{ padding: '16px', fontSize: 15, textAlign: 'left', background: 'var(--bg-panel-raised)', color: 'var(--text-primary)', border: '3px solid var(--outline)' }}
-          >
-            {jeu.nom}
-          </button>
-        ))}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, overflowY: 'auto' }}>
+        {(payload?.jeux || []).map((jeu) => {
+          const style = STYLE_PAR_JEU[jeu.id] || {};
+          const Icone = style.Icone;
+          return (
+            <button
+              key={jeu.id}
+              onClick={() => voter(jeu)}
+              className="btn"
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                padding: '16px 10px', fontSize: 13, textAlign: 'center',
+                background: style.bg || 'var(--bg-panel-raised)', color: style.contour ? style.couleur : 'var(--outline)',
+                border: `3px solid ${style.contour || 'var(--outline)'}`, borderRadius: 16,
+              }}
+            >
+              {Icone && (
+                <span style={{ width: 32, height: 32, borderRadius: 10, background: style.contour ? 'var(--bg-panel-raised)' : 'rgba(0,0,0,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icone color={style.contour ? style.couleur : 'var(--outline)'} size={18} />
+                </span>
+              )}
+              <span style={{ lineHeight: 1.2 }}>{jeu.nom}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

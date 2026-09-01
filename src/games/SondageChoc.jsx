@@ -42,7 +42,7 @@ export default function SondageChoc({ manche, remote, onTermine }) {
         remote={remote}
         question={s.question}
         options={s.options}
-        duree={14}
+        duree={25}
         modeScoring="majorite"
         texteReussite="COMME LA MAJORITÉ !"
         texteEchec="Voix isolée, mais respectée."

@@ -19,7 +19,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export default function BuzzerHost({
   remote, consigne, enfants, pointsGagnant = 6, boutonLabel = 'Ouvrir les buzzers',
-  demanderJugement = false, perdant = false, joueursEligibles, auto = false,
+  demanderJugement = false, perdant = false, joueursEligibles, auto = false, ouvertureInstantanee = false,
   question, options, bonneReponse, dureeReponse = 8,
   onTermine,
 }) {
@@ -75,7 +75,8 @@ export default function BuzzerHost({
   };
 
   useEffect(() => {
-    if (auto) demarrerAuto();
+    if (ouvertureInstantanee) demarrer();
+    else if (auto) demarrerAuto();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -135,8 +136,21 @@ export default function BuzzerHost({
 
   const valider = () => {
     if (etape === 'personne') { onTermine({}); return; }
+    if (perdant) { onTermine(Object.fromEntries(nomsConnectesBase.map((n) => [n, n === gagnant ? 0 : pointsGagnant]))); return; }
     onTermine({ [gagnant]: pointsGagnant });
   };
+
+  // Validation automatique — sauf quand l'hôte doit trancher à voix haute
+  // (demanderJugement) : là, impossible de savoir si la réponse est bonne
+  // sans un humain qui écoute.
+  useEffect(() => {
+    if (etape === 'personne' || (etape === 'resultat' && !(demanderJugement && !avecQcm && !perdant))) {
+      const t = setTimeout(valider, 2600);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '44px 24px', textAlign: 'center' }}>
@@ -173,29 +187,21 @@ export default function BuzzerHost({
       {etape === 'personne' && (
         <>
           <div className="display-title" style={{ fontSize: 26, color: 'var(--accent-magenta)' }}>Personne n'a trouvé !</div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>Manche suivante</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Manche suivante dans un instant...</p>
         </>
       )}
 
       {etape === 'resultat' && perdant && (
         <>
           <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-magenta)' }}>{gagnant} a buzzé en premier… et perd la manche !</div>
-          <button
-            className="btn btn-lime"
-            style={{ fontSize: 18, padding: '16px 36px' }}
-            onClick={() => onTermine(Object.fromEntries(nomsConnectesBase.map((n) => [n, n === gagnant ? 0 : pointsGagnant])))}
-          >
-            Valider
-          </button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
 
       {etape === 'resultat' && !perdant && avecQcm && (
         <>
           <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-lime)' }}>{gagnant} a trouvé la bonne réponse !</div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>
-            Valider · +{pointsGagnant} pour {gagnant}
-          </button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>+{pointsGagnant} pour {gagnant}, appliqué dans un instant...</p>
         </>
       )}
 
@@ -217,9 +223,7 @@ export default function BuzzerHost({
       {etape === 'resultat' && !perdant && !avecQcm && !demanderJugement && (
         <>
           <div className="display-title" style={{ fontSize: 28, color: 'var(--accent-lime)' }}>{gagnant} a buzzé en premier !</div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={() => onTermine({ [gagnant]: pointsGagnant })}>
-            Valider · +{pointsGagnant} pour {gagnant}
-          </button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>+{pointsGagnant} pour {gagnant}, appliqué dans un instant...</p>
         </>
       )}
     </div>

@@ -47,8 +47,10 @@ function resoudre(segment) {
   return { points: POINTS_FIXES[segment] ?? 0, detail: null };
 }
 
+const DUREE_MAX = 20; // secondes, tout le monde a fini d'appuyer bien avant
+
 export default function RouletteHost({ remote, consigne, onTermine }) {
-  const [etape, setEtape] = useState('avant'); // avant | tourne | resultat
+  const [etape, setEtape] = useState('tourne'); // tourne | resultat
   const [angle, setAngle] = useState(0);
   const angleActuelRef = useRef(0);
   const vitesseRef = useRef(200);
@@ -57,6 +59,7 @@ export default function RouletteHost({ remote, consigne, onTermine }) {
   const idRef = useRef(0);
   const rafRef = useRef(null);
   const resultatsRef = useRef({}); // nom -> { segment, points, detail }, figé au premier tap
+  const joueursConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
 
   const demarrer = () => {
     remote.resetActions();
@@ -87,12 +90,7 @@ export default function RouletteHost({ remote, consigne, onTermine }) {
     rafRef.current = requestAnimationFrame(boucle);
   };
 
-  const arreter = () => {
-    cancelAnimationFrame(rafRef.current);
-    setEtape('resultat');
-  };
-
-  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+  useEffect(() => { demarrer(); return () => cancelAnimationFrame(rafRef.current); }, []);
 
   Object.keys(remote.actionsRecues).forEach((nom) => {
     if (resultatsRef.current[nom]) return;
@@ -102,6 +100,19 @@ export default function RouletteHost({ remote, consigne, onTermine }) {
     resultatsRef.current[nom] = { segment, ...resoudre(segment) };
   });
   const resultats = resultatsRef.current;
+  const nbResultats = Object.keys(resultats).length;
+
+  useEffect(() => {
+    if (etape !== 'tourne') return undefined;
+    if (joueursConnectes.length > 0 && nbResultats >= joueursConnectes.length) {
+      cancelAnimationFrame(rafRef.current);
+      setEtape('resultat');
+      return undefined;
+    }
+    const t = setTimeout(() => { cancelAnimationFrame(rafRef.current); setEtape('resultat'); }, DUREE_MAX * 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape, nbResultats]);
 
   const terminer = () => {
     const scores = {};
@@ -109,28 +120,30 @@ export default function RouletteHost({ remote, consigne, onTermine }) {
     onTermine(scores);
   };
 
+  useEffect(() => {
+    if (etape === 'resultat') {
+      const t = setTimeout(terminer, 3000);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
+
   const gradient = `conic-gradient(${SEGMENTS.map((s, i) => `${COULEURS[s]} ${i * TAILLE_SEGMENT}deg ${(i + 1) * TAILLE_SEGMENT}deg`).join(', ')})`;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '40px 24px', textAlign: 'center' }}>
       {consigne && <p style={{ color: 'var(--text-muted)', maxWidth: 480 }}>{consigne}</p>}
 
-      {etape !== 'avant' && (
-        <div style={{ position: 'relative', width: 220, height: 220 }}>
-          <div style={{ width: '100%', height: '100%', borderRadius: 999, transform: `rotate(${angle}deg)`, background: gradient, border: '4px solid var(--outline)' }} />
-          <div style={{ position: 'absolute', top: -6, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: '16px solid var(--accent-magenta)' }} />
-        </div>
-      )}
-
-      {etape === 'avant' && <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={demarrer}>Lancer la roue</button>}
+      <div style={{ position: 'relative', width: 220, height: 220 }}>
+        <div style={{ width: '100%', height: '100%', borderRadius: 999, transform: `rotate(${angle}deg)`, background: gradient, border: '4px solid var(--outline)' }} />
+        <div style={{ position: 'absolute', top: -6, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: '16px solid var(--accent-magenta)' }} />
+      </div>
 
       {etape === 'tourne' && (
-        <>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {Object.keys(resultats).map((n) => <span key={n} className="tag">{n} · {resultats[n].segment}</span>)}
-          </div>
-          <button className="btn btn-lime" style={{ fontSize: 16, padding: '14px 30px' }} onClick={arreter}>Arrêter et voir le résultat</button>
-        </>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+          {Object.keys(resultats).map((n) => <span key={n} className="tag">{n} · {resultats[n].segment}</span>)}
+        </div>
       )}
 
       {etape === 'resultat' && (
@@ -146,7 +159,7 @@ export default function RouletteHost({ remote, consigne, onTermine }) {
               </div>
             ))}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={terminer}>Valider les points</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

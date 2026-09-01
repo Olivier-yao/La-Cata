@@ -33,7 +33,7 @@ import Avatar from '../components/Avatar.jsx';
 
 export default function QcmHost({
   remote, question, consigne, options, duree = 12, modeScoring = 'majorite', bonneReponse, pointsGagnant = 6,
-  texteReussite = 'BIEN VU !', texteEchec = 'Résultat affiché sur l\'écran principal', texteEgalite = 'Égalité — personne ne marque de points.',
+  texteReussite = 'BIEN VU !', texteEchec = 'Raté, tu n\'avais pas la bonne réponse.', texteEgalite = 'Égalité — personne ne marque de points.',
   autoDemarrer = false, votantsEligibles, onTermine, onResultat,
 }) {
   const [etape, setEtape] = useState(autoDemarrer ? 'ouvert' : 'avant'); // avant | ouvert | resultat
@@ -120,6 +120,17 @@ export default function QcmHost({
     onTermine(scores);
   };
 
+  // Validation automatique : les points tombent tout seuls quelques
+  // secondes après l'affichage du résultat, sans clic côté hôte.
+  useEffect(() => {
+    if (etape === 'resultat') {
+      const t = setTimeout(valider, 3000);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '40px 24px', textAlign: 'center', width: '100%' }}>
       {consigne && <p style={{ color: 'var(--text-muted)', maxWidth: 480 }}>{consigne}</p>}
@@ -167,7 +178,7 @@ export default function QcmHost({
               );
             })}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>Valider</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

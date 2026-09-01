@@ -9,11 +9,16 @@ import Avatar from '../components/Avatar.jsx';
 // mini-jeux Manette Party à voter (VoteJeuPhone) : voter vaut "prêt", pas
 // besoin d'un geste séparé. Après 10s (ou plus tôt si tout le monde a
 // voté), le jeu le plus voté est lancé automatiquement — égalité
-// départagée au hasard parmi les meilleurs. L'hôte garde la main : un
-// clic sur "Manche suivante" annule le vote en cours et repasse par le
-// choix manuel classique.
+// départagée au hasard parmi les meilleurs. Un clic sur "Choisir un autre
+// type de jeu" annule le vote en cours et repasse par le choix manuel.
+//
+// Si le vote téléphone n'est pas actif (manches d'affilée du même jeu,
+// aucun téléphone connecté, jeu non-manette...), la manche suivante
+// s'enchaîne toute seule après un court délai — "Manche suivante" ne sert
+// plus qu'à accélérer.
 
 const DUREE_VOTE = 10;
+const DELAI_AUTO_SUIVANTE = 3500;
 
 export default function ScoreboardScreen({
   joueurs, scores, manche, totalManches, onMancheSuivante, onTerminer, modeAuto, onQuitterAuto,
@@ -82,6 +87,15 @@ export default function ScoreboardScreen({
   };
 
   const jeuGagnant = gagnantRef.current && jeuxManette?.find((j) => j.id === gagnantRef.current);
+
+  const autoAvanceRef = useRef(false);
+  useEffect(() => {
+    if (voteActif || autoAvanceRef.current) return undefined;
+    autoAvanceRef.current = true;
+    const t = setTimeout(() => onMancheSuivante(), DELAI_AUTO_SUIVANTE);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voteActif]);
 
   const classement = joueurs
     .map((nom, i) => ({ nom, index: i, points: scores[nom] || 0 }))

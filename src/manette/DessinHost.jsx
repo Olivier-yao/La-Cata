@@ -11,8 +11,8 @@ import React, { useEffect, useRef, useState } from 'react';
 // et Devine) — l'artiste gagne un bonus selon le nombre de bonnes
 // réponses, chaque bon devineur gagne aussi des points.
 
-export default function DessinHost({ remote, dureeParTour = 18, consigne, consigneArtiste, nbArtistes, demanderJugement = false, onTermine }) {
-  const [etape, setEtape] = useState('avant'); // avant | tour | fin | jugement
+export default function DessinHost({ remote, dureeParTour = 18, consigne, consigneArtiste, nbArtistes, demanderJugement = false, pointsParDefaut = 3, onTermine }) {
+  const [etape, setEtape] = useState('avant'); // avant | tour | fin | jugement | jugement-envoye
   const [devineurs, setDevineurs] = useState(new Set());
   const [ordre, setOrdre] = useState([]);
   const [tourIndex, setTourIndex] = useState(0);
@@ -64,7 +64,7 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, consig
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tempsRestant, etape]);
 
-  useEffect(() => () => clearInterval(intervalRef.current), []);
+  useEffect(() => { demarrer(); return () => clearInterval(intervalRef.current); }, []);
 
   // Trace le point le plus récent reçu de l'artiste courant.
   useEffect(() => {
@@ -95,34 +95,59 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, consig
 
   const artiste = ordre[0];
   const autresJoueurs = remote.connectes.filter((j) => j.connecte && j.nom !== artiste).map((j) => j.nom);
+  const jugementIdRef = useRef(null);
 
   const terminer = () => {
-    if (demanderJugement) { setEtape('jugement'); return; }
+    if (demanderJugement) {
+      jugementIdRef.current = Date.now();
+      remote.envoyerActionPrivee({ [artiste]: { prim: 'dessin', etape: 'jugement', joueurs: autresJoueurs, id: jugementIdRef.current } });
+      setEtape('jugement');
+      return;
+    }
     const scores = {};
-    ordre.forEach((nom) => { scores[nom] = 3; });
+    ordre.forEach((nom) => { scores[nom] = pointsParDefaut; });
     onTermine(scores);
   };
 
-  const basculerDevineur = (nom) => {
-    setDevineurs((prev) => {
-      const suivant = new Set(prev);
-      if (suivant.has(nom)) suivant.delete(nom); else suivant.add(nom);
-      return suivant;
-    });
-  };
+  useEffect(() => {
+    if (etape === 'fin') {
+      const t = setTimeout(terminer, 2500);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
 
-  const validerJugement = () => {
+  const validerJugement = (nomsDevineurs) => {
     const scores = {};
-    devineurs.forEach((nom) => { scores[nom] = 3; });
-    if (artiste) scores[artiste] = devineurs.size > 0 ? devineurs.size * 2 : 1;
+    nomsDevineurs.forEach((nom) => { scores[nom] = 3; });
+    if (artiste) scores[artiste] = nomsDevineurs.length > 0 ? nomsDevineurs.length * 2 : 1;
     onTermine(scores);
   };
+
+  // Reçoit le jugement envoyé par l'artiste depuis son propre téléphone.
+  useEffect(() => {
+    if (etape !== 'jugement' || !artiste) return;
+    const payload = remote.actionsRecues[artiste];
+    if (payload?.prim === 'dessin-jugement' && payload.id === jugementIdRef.current) {
+      setDevineurs(new Set(payload.devineurs || []));
+      setEtape('jugement-envoye');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remote.actionsRecues, etape]);
+
+  useEffect(() => {
+    if (etape === 'jugement-envoye') {
+      const t = setTimeout(() => validerJugement([...devineurs]), 2500);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, padding: '32px 24px', textAlign: 'center' }}>
       {consigne && <p style={{ color: 'var(--text-muted)', maxWidth: 480 }}>{consigne}</p>}
-
-      {etape === 'avant' && <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={demarrer}>Lancer le dessin collectif</button>}
 
       {etape !== 'avant' && (
         <canvas ref={canvasRef} width={640} height={420} style={{ width: '100%', maxWidth: 640, background: 'var(--outline)', borderRadius: 18, border: '3px solid var(--outline)', touchAction: 'none' }} />
@@ -137,29 +162,25 @@ export default function DessinHost({ remote, dureeParTour = 18, consigne, consig
         </>
       )}
 
-      {etape === 'fin' && (
-        <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={terminer}>{demanderJugement ? 'Qui a deviné juste ?' : 'Admirer et valider'}</button>
+      {etape === 'fin' && demanderJugement && (
+        <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>{artiste} choisit qui a deviné juste sur son téléphone...</p>
+      )}
+      {etape === 'fin' && !demanderJugement && (
+        <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
       )}
 
       {etape === 'jugement' && (
+        <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>{artiste} choisit qui a deviné juste sur son téléphone...</p>
+      )}
+
+      {etape === 'jugement-envoye' && (
         <>
-          <div className="display-title" style={{ fontSize: 16, color: 'var(--accent-yellow)' }}>QUI A DEVINÉ JUSTE À VOIX HAUTE ?</div>
+          <div className="display-title" style={{ fontSize: 16, color: 'var(--accent-yellow)' }}>ONT DEVINÉ JUSTE À VOIX HAUTE</div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {autresJoueurs.map((nom) => {
-              const coche = devineurs.has(nom);
-              return (
-                <button
-                  key={nom}
-                  onClick={() => basculerDevineur(nom)}
-                  className="btn"
-                  style={{ padding: '12px 20px', fontSize: 15, background: coche ? 'var(--accent-lime)' : 'var(--bg-panel-raised)', color: coche ? 'var(--outline)' : 'var(--text-primary)', border: '3px solid var(--outline)' }}
-                >
-                  {coche ? '✓ ' : ''}{nom}
-                </button>
-              );
-            })}
+            {[...devineurs].length === 0 && <span style={{ color: 'var(--text-muted)' }}>Personne, selon {artiste}.</span>}
+            {[...devineurs].map((nom) => <span key={nom} className="tag" style={{ background: 'var(--accent-lime)', color: 'var(--outline)' }}>{nom}</span>)}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={validerJugement}>Valider les points</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

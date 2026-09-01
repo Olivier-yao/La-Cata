@@ -176,7 +176,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Un défi coopératif : tout le monde tape en même temps sur son téléphone pour atteindre ensemble un objectif d'appuis avant la fin du chrono.",
+    regles: "Chacun a sa propre jauge sur son téléphone (maintenir pour charger, ça redescend si on relâche) — mais il ne suffit pas de rester au maximum : il faut suivre une zone cible qui bouge et rétrécit tout du long. Points selon le temps passé dedans.",
   },
   {
     id: 'marathon-des-doigts',
@@ -184,7 +184,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Dix secondes chrono, chacun tape le plus vite possible sur son téléphone. Classement individuel au nombre d'appuis.",
+    regles: "Chacun a un coureur sur une ligne de départ, qui n'avance qu'à coups de tapotements sur le téléphone — de base ça bouge à peine, il faut vraiment marteler. Pas de chrono qui coupe : la manche continue jusqu'à ce que tout le monde ait franchi la ligne d'arrivée, chacun avec son propre temps de parcours.",
   },
   {
     id: 'sondage-choc',
@@ -216,7 +216,7 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Un objet et quatre fourchettes de prix s'affichent. Chacun estime le bon prix sur son téléphone.",
+    regles: "Un objet et quatre fourchettes de prix s'affichent, chacun estime le bon prix sur son téléphone. Ensuite, un objet mystère à bonus caché est en vente — premier qui appuie l'achète, et choisit en secret sur qui l'utiliser : ça peut avantager ou désavantager la cible.",
   },
   {
     id: 'vote-de-la-honte',
@@ -233,14 +233,6 @@ export const GAMES = [
     groupe: true,
     manette: true,
     regles: "Une séquence de couleurs s'affiche une seule fois sur l'écran. Chacun doit la retaper dans l'ordre sur les 4 boutons de son téléphone — classement au plus long préfixe correct.",
-  },
-  {
-    id: 'memoire-flash-collective',
-    nom: 'Mémoire Flash Collective',
-    voteType: 'aucun',
-    groupe: true,
-    manette: true,
-    regles: "Un nombre à 5 chiffres s'affiche quelques secondes sur l'écran principal, tout le monde mémorise en même temps. Chacun le retape ensuite sur son téléphone (personne ne voit ce que les autres tapent), et la révélation compare chiffre par chiffre à la fin.",
   },
   {
     id: 'cadavre-exquis-numerique',
@@ -297,20 +289,12 @@ export const GAMES = [
     regles: "Un temps secret est fixé, personne ne voit de chrono nulle part. Chacun appuie STOP sur son téléphone quand il pense que le temps est écoulé — le plus proche du temps secret gagne, dépasser coûte plus cher que s'arrêter trop tôt.",
   },
   {
-    id: 'chaise-musicale-numerique',
-    nom: 'Chaise Musicale Numérique',
-    voteType: 'aucun',
-    groupe: true,
-    manette: true,
-    regles: "Tout le monde martèle son téléphone. La musique s'arrête sans prévenir, à n'importe quel moment — celui ou celle qui a le moins tapé à cet instant précis est éliminé·e.",
-  },
-  {
     id: 'marche-noir',
     nom: 'Marché Noir',
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Un objet mystère est à vendre, sans aucun indice de valeur. Chacun mise ce qu'il veut sur son téléphone, en secret — la plus grosse mise remporte l'objet, mais paie le prix fort si elle est trop haute.",
+    regles: "Une série de 15 objets mystère à vendre, chacun avec un bonus ou un piège caché révélé seulement une fois gagné. Chacun mise ce qu'il veut sur son téléphone, en secret, avec un portefeuille fixe qui s'épuise achat après achat — à sec, impossible de remporter la moindre enchère.",
   },
   {
     id: 'dessine-et-devine',
@@ -327,14 +311,6 @@ export const GAMES = [
     groupe: true,
     manette: true,
     regles: "Un nombre secret entre 1 et 100 se devine en deux manches. La première, à l'aveugle, ne rapporte rien — elle sert juste à révéler si le nombre est plus grand ou plus petit que la moyenne du groupe. La seconde manche, avec cet indice, compte pour de vrai.",
-  },
-  {
-    id: 'ni-vu-ni-connu',
-    nom: 'Ni Vu Ni Connu',
-    voteType: 'aucun',
-    groupe: true,
-    manette: true,
-    regles: "Même buzzer automatique et imprévisible que Le Duel du Buzzer, mais la tension est inversée : le premier qui craque et appuie sur son téléphone perd la manche. Un jeu de nerfs, pas de réflexes.",
   },
   {
     id: 'guerre-des-watts',

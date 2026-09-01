@@ -18,7 +18,7 @@ export default function VraiOuIntox({ manche, remote, onTermine }) {
         bonneReponse={a.vrai ? 0 : 1}
         pointsGagnant={5}
         texteReussite="BIEN VU, VOUS AVIEZ RAISON !"
-        texteEchec="Raté, la vraie réponse s'affiche sur l'écran."
+        texteEchec="Raté, tu n'avais pas la bonne réponse."
         consigne="Chacun tranche en secret sur son téléphone."
         onTermine={(scores) => onTermine({ scores })}
       />

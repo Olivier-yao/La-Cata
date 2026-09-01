@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { STYLE_PAR_JEU } from '../lib/styleJeux.js';
 
 // ReglesJeuScreen — explique le mini-jeu choisi avant de le lancer :
@@ -7,10 +7,24 @@ import { STYLE_PAR_JEU } from '../lib/styleJeux.js';
 // s'embarque. Pour les mini-jeux `groupe` (une seule manche par défaut,
 // notamment tous les Manette Party), on peut aussi choisir d'enchaîner
 // plusieurs manches d'affilée du même jeu avant de revenir au choix.
+//
+// La consigne reste visible 15s puis le jeu se lance tout seul, sans clic —
+// "C'est parti" ne sert plus qu'à accélérer pour ceux qui ne veulent pas
+// attendre.
+
+const DUREE_AFFICHAGE = 15;
 
 export default function ReglesJeuScreen({ jeu, onLancer, onChangerDeJeu }) {
   const { Icone, bg, couleur, contour } = STYLE_PAR_JEU[jeu.id];
   const [nbManches, setNbManches] = useState(1);
+  const [decompte, setDecompte] = useState(DUREE_AFFICHAGE);
+
+  useEffect(() => {
+    if (decompte <= 0) { onLancer(nbManches); return undefined; }
+    const t = setTimeout(() => setDecompte((d) => d - 1), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [decompte]);
 
   return (
     <div className="stage" style={{ padding: '48px 44px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26, textAlign: 'center' }}>
@@ -46,6 +60,9 @@ export default function ReglesJeuScreen({ jeu, onLancer, onChangerDeJeu }) {
           C'est parti{nbManches > 1 ? ` · ${nbManches} manches` : ''}
         </button>
       </div>
+      <p style={{ position: 'relative', fontSize: 12, color: 'var(--text-dim)', animation: `lc-cascadein 320ms ease-out ${jeu.groupe ? 680 : 540}ms both` }}>
+        Lancement automatique dans {decompte}s…
+      </p>
     </div>
   );
 }

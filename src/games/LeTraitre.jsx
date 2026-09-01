@@ -15,6 +15,15 @@ export default function LeTraitre({ manche, remote, onTermine }) {
   });
   const joueursConnectes = remote.connectes.filter((j) => j.connecte).map((j) => j.nom);
 
+  if (joueursConnectes.length < 3) {
+    return (
+      <div className="stage" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 40, textAlign: 'center', minHeight: 420 }}>
+        <div className="display-title" style={{ fontSize: 26, color: 'var(--accent-magenta)' }}>Il manque des téléphones</div>
+        <p style={{ color: 'var(--text-muted)', maxWidth: 420 }}>Le Traître demande au moins 3 téléphones connectés.</p>
+      </div>
+    );
+  }
+
   const distribuerRoles = () => {
     remote.resetActions();
     const parJoueur = {};
@@ -26,6 +35,8 @@ export default function LeTraitre({ manche, remote, onTermine }) {
     remote.envoyerActionPrivee(parJoueur);
     setPhase('discussion');
   };
+
+  useEffect(() => { distribuerRoles(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Ne dépend pas de `phase` : une fois déclenché, `appelAuVote` doit
   // rester stable (pas retomber à `null`) pour que l'effet ci-dessous ne
@@ -42,7 +53,20 @@ export default function LeTraitre({ manche, remote, onTermine }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appelAuVote]);
 
-  const surResultatVote = ({ indexMajoritaire }) => {
+  // Le traître ne peut pas voter contre lui-même : si c'est le vote qu'il a
+  // envoyé, on l'ignore avant de recompter la majorité.
+  const surResultatVote = ({ choix }) => {
+    const indexTraitre = joueursConnectes.indexOf(traitre);
+    const choixValides = { ...choix };
+    if (choixValides[traitre] === indexTraitre) delete choixValides[traitre];
+    const tally = joueursConnectes.map((_, i) => Object.values(choixValides).filter((c) => c === i).length);
+    const max = Math.max(...tally);
+    const meilleurs = tally.reduce((acc, v, i) => (v === max && v > 0 ? [...acc, i] : acc), []);
+    const indexMajoritaire = meilleurs.length === 1 ? meilleurs[0] : -1;
+    if (indexMajoritaire === -1) {
+      onTermine({ scores: Object.fromEntries(joueursConnectes.map((n) => [n, 0])), resultat: 'Vote coupé en deux, le traître s\'en sort.' });
+      return;
+    }
     const elimine = joueursConnectes[indexMajoritaire];
     const traitreDemasque = elimine === traitre;
     const scores = {};
@@ -56,15 +80,6 @@ export default function LeTraitre({ manche, remote, onTermine }) {
   return (
     <div className="stage" style={{ display: 'flex', flexDirection: 'column' }}>
       <RoundHeader icone={<IconMasque color="var(--outline)" />} iconBg="var(--accent-magenta)" titre="Le Traître" sousTitre={`Manche ${manche}`} couleurTitre="var(--accent-magenta)" />
-
-      {phase === 'avant' && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '48px 24px', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-muted)', maxWidth: 460 }}>
-            Chaque téléphone va recevoir un rôle secret : un traître, et le reste loyal. Personne ne doit montrer son écran. N'importe qui pourra déclencher le vote depuis son téléphone, à tout moment.
-          </p>
-          <button className="btn btn-primary" style={{ fontSize: 20, padding: '20px 44px' }} onClick={distribuerRoles}>Distribuer les rôles</button>
-        </div>
-      )}
 
       {phase === 'discussion' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '44px 24px', textAlign: 'center' }}>

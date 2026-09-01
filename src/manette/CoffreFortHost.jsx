@@ -8,7 +8,7 @@ import Avatar from '../components/Avatar.jsx';
 // tous, jamais remise en jeu) — le coffre s'ouvre quand les 4 positions
 // sont verrouillées, ou le chrono s'arrête avant.
 
-const LONGUEUR = 4;
+const LONGUEURS_POSSIBLES = [4, 6, 8];
 const DUREE = 45;
 
 function genererCode(longueur) {
@@ -17,9 +17,10 @@ function genererCode(longueur) {
 }
 
 export default function CoffreFortHost({ remote, onTermine }) {
-  const [etape, setEtape] = useState('avant'); // avant | ouvert | resultat
-  const [code] = useState(() => genererCode(LONGUEUR));
-  const [locked, setLocked] = useState(() => Array(LONGUEUR).fill(null));
+  const [longueur] = useState(() => LONGUEURS_POSSIBLES[Math.floor(Math.random() * LONGUEURS_POSSIBLES.length)]);
+  const [etape, setEtape] = useState('ouvert'); // ouvert | resultat
+  const [code] = useState(() => genererCode(longueur));
+  const [locked, setLocked] = useState(() => Array(longueur).fill(null));
   const [locksParJoueur, setLocksParJoueur] = useState({});
   const [tempsRestant, setTempsRestant] = useState(DUREE);
   const idRef = useRef(0);
@@ -31,15 +32,15 @@ export default function CoffreFortHost({ remote, onTermine }) {
     remote.resetActions();
     idRef.current = Date.now();
     traiteRef.current = new Set();
-    setLocked(Array(LONGUEUR).fill(null));
+    setLocked(Array(longueur).fill(null));
     setLocksParJoueur({});
     setTempsRestant(DUREE);
     setEtape('ouvert');
-    remote.envoyerAction({ prim: 'coffre-fort', etape: 'ouvert', longueur: LONGUEUR, id: idRef.current });
+    remote.envoyerAction({ prim: 'coffre-fort', etape: 'ouvert', longueur, id: idRef.current });
     intervalRef.current = setInterval(() => setTempsRestant((t) => (t <= 1 ? 0 : t - 1)), 1000);
   };
 
-  useEffect(() => () => clearInterval(intervalRef.current), []);
+  useEffect(() => { demarrer(); return () => clearInterval(intervalRef.current); }, []);
 
   // Traite chaque nouvelle tentative reçue (une par joueur au plus dans
   // `actionsRecues`, mais on ne rejoue jamais deux fois la même grâce à
@@ -56,7 +57,7 @@ export default function CoffreFortHost({ remote, onTermine }) {
       setLocked((prevLocked) => {
         const nouveau = [...prevLocked];
         let nbNouveaux = 0;
-        for (let i = 0; i < LONGUEUR; i++) {
+        for (let i = 0; i < longueur; i++) {
           if (nouveau[i] === null && guess[i] === code[i]) { nouveau[i] = code[i]; nbNouveaux++; }
         }
         if (nbNouveaux > 0) {
@@ -102,26 +103,29 @@ export default function CoffreFortHost({ remote, onTermine }) {
     onTermine(scores);
   };
 
+  useEffect(() => {
+    if (etape === 'resultat') {
+      const t = setTimeout(valider, 3500);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etape]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, padding: '40px 24px', textAlign: 'center' }}>
-      {etape === 'avant' && (
-        <>
-          <p style={{ color: 'var(--text-muted)', maxWidth: 460 }}>Un code à 4 chiffres est verrouillé dans le coffre. Chacun tente des combinaisons sur son téléphone, autant de fois qu'il veut — dès qu'un chiffre est trouvé à la bonne place, il reste acquis pour tout le monde.</p>
-          <button className="btn btn-cyan" style={{ fontSize: 20, padding: '20px 44px' }} onClick={demarrer}>Ouvrir le coffre ({DUREE}s)</button>
-        </>
-      )}
-
       {etape === 'ouvert' && (
         <>
           <div className="display-title" style={{ fontSize: 32, color: 'var(--accent-yellow)' }}>{tempsRestant}s</div>
+          <p style={{ color: 'var(--text-dim)', fontSize: 13, maxWidth: 420 }}>Les vrais chiffres ne s'affichent qu'à la toute fin — seul le nombre de positions trouvées se voit en direct.</p>
           <div style={{ display: 'flex', gap: 14 }}>
             {locked.map((d, i) => (
               <div key={i} style={{ width: 64, height: 64, borderRadius: 14, border: `4px solid ${d !== null ? 'var(--accent-lime)' : 'var(--outline)'}`, background: d !== null ? 'var(--accent-lime)' : 'var(--bg-panel-raised)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span className="display-title" style={{ fontSize: 28, color: d !== null ? 'var(--outline)' : 'var(--text-dim)' }}>{d !== null ? d : '🔒'}</span>
+                {d !== null ? <span style={{ width: 14, height: 14, borderRadius: 999, background: 'var(--outline)' }} /> : <span className="display-title" style={{ fontSize: 28, color: 'var(--text-dim)' }}>🔒</span>}
               </div>
             ))}
           </div>
-          <p style={{ color: 'var(--text-dim)', fontSize: 13 }}>{locked.filter((d) => d !== null).length} / {LONGUEUR} chiffres verrouillés</p>
+          <p style={{ color: 'var(--text-dim)', fontSize: 13 }}>{locked.filter((d) => d !== null).length} / {longueur} chiffres verrouillés</p>
           {contributeurs.length > 0 && (
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
               {contributeurs.map(([nom, n]) => (
@@ -156,7 +160,7 @@ export default function CoffreFortHost({ remote, onTermine }) {
               </div>
             ))}
           </div>
-          <button className="btn btn-lime" style={{ fontSize: 18, padding: '16px 36px' }} onClick={valider}>Valider les points</button>
+          <p style={{ fontSize: 13, color: 'var(--text-dim)' }}>Points appliqués dans un instant...</p>
         </>
       )}
     </div>

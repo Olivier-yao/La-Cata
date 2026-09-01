@@ -18,7 +18,7 @@ export default function PlusOuMoins({ manche, remote, onTermine }) {
         bonneReponse={q.bonneReponse}
         pointsGagnant={5}
         texteReussite="DANS LE MILLE !"
-        texteEchec="Perdu, la bonne réponse s'affiche sur l'écran."
+        texteEchec="Perdu, ce n'était pas la bonne réponse."
         consigne="Chacun choisit sur son téléphone. Bonne réponse = points."
         onTermine={(scores) => onTermine({ scores })}
       />
