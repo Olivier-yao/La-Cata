@@ -56,6 +56,7 @@ export const FAMILLE_PAR_JEU = {
   'roue-du-destin': 'manette-party',
   'proces-fictif': 'manette-party',
   'emission-tele-achat': 'manette-party',
+  'coffre-fort': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 

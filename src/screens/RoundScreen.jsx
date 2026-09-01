@@ -48,6 +48,7 @@ import LeTraitre from '../games/LeTraitre.jsx';
 import EspionParmiNous from '../games/EspionParmiNous.jsx';
 import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
 import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
+import CoffreFort from '../games/CoffreFort.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
@@ -85,6 +86,7 @@ const COMPOSANTS_PAR_JEU = {
   'espion-parmi-nous': EspionParmiNous,
   'roue-du-destin': LaRoueDuDestin,
   'croquis-en-direct': CroquisEnDirect,
+  'coffre-fort': CoffreFort,
 };
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement

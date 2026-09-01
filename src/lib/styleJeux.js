@@ -59,4 +59,5 @@ export const STYLE_PAR_JEU = {
   'espion-parmi-nous': { Icone: IconMasque, bg: 'var(--bg-deep)', couleur: 'var(--accent-cyan)', contour: 'var(--accent-cyan)' },
   'roue-du-destin': { Icone: IconRoue, bg: 'var(--accent-yellow)', couleur: 'var(--accent-yellow)' },
   'croquis-en-direct': { Icone: IconCrayonTactile, bg: 'var(--accent-lime)', couleur: 'var(--accent-lime)' },
+  'coffre-fort': { Icone: IconCadenas, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
 };

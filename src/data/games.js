@@ -280,6 +280,14 @@ export const GAMES = [
     voteType: 'graduee',
     regles: "Une consigne de dessin est envoyée sur le téléphone du joueur actif, qui dessine directement dessus — le trait apparaît en direct sur l'écran principal. La table note le résultat.",
   },
+  {
+    id: 'coffre-fort',
+    nom: 'Coffre Fort',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un code à 4 chiffres est verrouillé dans le coffre. Chacun tente des combinaisons sur son téléphone, autant de fois qu'il veut pendant le chrono — dès qu'un chiffre est trouvé à la bonne place, il reste acquis pour tout le monde. Le coffre s'ouvre quand les 4 chiffres sont trouvés.",
+  },
 ];
 
 export const jeuAleatoire = creerPickerAleatoire(GAMES);
