@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GAMES } from '../data/games.js';
 import { STYLE_PAR_JEU } from '../lib/styleJeux.js';
 import { FAMILLES, FAMILLE_PAR_JEU, BADGE_JOUEURS } from '../lib/famillesJeux.js';
@@ -10,8 +10,13 @@ import SettingsDrawer from '../components/SettingsDrawer.jsx';
 // charge de 28 jeux : groupés en 4 familles pliables plutôt qu'en grille
 // plate, réglages sortis dans un tiroir dédié, mode auto comme deuxième
 // affichage du même écran (pas une popup).
+//
+// En choix manuel, un jeu au hasard se lance tout seul après un court
+// délai si personne n'a rien choisi entre-temps — cet écran ne bloque
+// jamais la soirée en attendant un clic.
 
 const MINUTES_PAR_MANCHE = 3.75;
+const DELAI_AUTO_HASARD = 20;
 
 function jeuxDeFamille(familleId) {
   return GAMES.filter((j) => (FAMILLE_PAR_JEU[j.id] || 'chrono-solo') === familleId);
@@ -251,6 +256,15 @@ export default function GameSelectScreen({
   const [vueListe, setVueListe] = useState(false);
   const [familleOuverte, setFamilleOuverte] = useState(null);
   const [drawerOuvert, setDrawerOuvert] = useState(false);
+  const [decompte, setDecompte] = useState(DELAI_AUTO_HASARD);
+
+  useEffect(() => {
+    if (segment !== 'manuel' || drawerOuvert) return undefined;
+    if (decompte <= 0) { onHasard(); return undefined; }
+    const t = setTimeout(() => setDecompte((d) => d - 1), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [decompte, segment, drawerOuvert]);
 
   const basculerSon = () => {
     const nouveau = !sonActif;
@@ -330,6 +344,9 @@ export default function GameSelectScreen({
                 {vueListe ? 'Grille' : 'Liste'}
               </button>
             </div>
+            <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: 8 }}>
+              Personne ne choisit ? Un jeu au hasard se lance dans {decompte}s…
+            </p>
           </>
         ) : (
           <VueModeAuto nbJoueurs={nbJoueurs} onLancerAuto={onLancerAuto} />
