@@ -61,6 +61,7 @@ export const FAMILLE_PAR_JEU = {
   'chaise-musicale-numerique': 'manette-party',
   'marche-noir': 'manette-party',
   'dessine-et-devine': 'manette-party',
+  'chaud-froid': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 

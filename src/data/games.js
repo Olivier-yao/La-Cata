@@ -320,6 +320,14 @@ export const GAMES = [
     manette: true,
     regles: "Un·e artiste tiré·e au sort reçoit un mot secret sur son téléphone et le dessine dessus — le trait apparaît en direct sur l'écran principal. Les autres devinent à voix haute ; l'hôte coche ensuite qui a trouvé.",
   },
+  {
+    id: 'chaud-froid',
+    nom: 'Chaud-Froid Collectif',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Un nombre secret entre 1 et 100 se devine en deux manches. La première, à l'aveugle, ne rapporte rien — elle sert juste à révéler si le nombre est plus grand ou plus petit que la moyenne du groupe. La seconde manche, avec cet indice, compte pour de vrai.",
+  },
 ];
 
 export const jeuAleatoire = creerPickerAleatoire(GAMES);

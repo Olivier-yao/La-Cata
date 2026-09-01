@@ -53,6 +53,7 @@ import ChronoAveugle from '../games/ChronoAveugle.jsx';
 import ChaiseMusicale from '../games/ChaiseMusicale.jsx';
 import MarcheNoir from '../games/MarcheNoir.jsx';
 import DessineEtDevine from '../games/DessineEtDevine.jsx';
+import ChaudFroid from '../games/ChaudFroid.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
@@ -95,6 +96,7 @@ const COMPOSANTS_PAR_JEU = {
   'chaise-musicale-numerique': ChaiseMusicale,
   'marche-noir': MarcheNoir,
   'dessine-et-devine': DessineEtDevine,
+  'chaud-froid': ChaudFroid,
 };
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement

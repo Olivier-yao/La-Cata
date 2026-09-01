@@ -65,4 +65,5 @@ export const STYLE_PAR_JEU = {
   'chaise-musicale-numerique': { Icone: IconCorde, bg: 'var(--bg-deep)', couleur: 'var(--accent-magenta)', contour: 'var(--accent-magenta)' },
   'marche-noir': { Icone: IconCamembertVote, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
   'dessine-et-devine': { Icone: IconCrayonTactile, bg: 'var(--accent-cyan)', couleur: 'var(--accent-cyan)' },
+  'chaud-froid': { Icone: IconCalcul, bg: 'var(--bg-deep)', couleur: 'var(--accent-cyan)', contour: 'var(--accent-cyan)' },
 };
