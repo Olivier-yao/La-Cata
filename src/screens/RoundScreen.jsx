@@ -49,6 +49,9 @@ import EspionParmiNous from '../games/EspionParmiNous.jsx';
 import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
 import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 import CoffreFort from '../games/CoffreFort.jsx';
+import ChronoAveugle from '../games/ChronoAveugle.jsx';
+import ChaiseMusicale from '../games/ChaiseMusicale.jsx';
+import MarcheNoir from '../games/MarcheNoir.jsx';
 
 const COMPOSANTS_PAR_JEU = {
   'virelangue-express': VirelangueExpress,
@@ -87,6 +90,9 @@ const COMPOSANTS_PAR_JEU = {
   'roue-du-destin': LaRoueDuDestin,
   'croquis-en-direct': CroquisEnDirect,
   'coffre-fort': CoffreFort,
+  'chrono-aveugle': ChronoAveugle,
+  'chaise-musicale-numerique': ChaiseMusicale,
+  'marche-noir': MarcheNoir,
 };
 
 // Mini-jeux "groupe" où chaque joueur du cast est noté individuellement

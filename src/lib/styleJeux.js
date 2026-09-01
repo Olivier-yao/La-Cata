@@ -1,4 +1,5 @@
 import {
+  IconChrono,
   IconVirelangue,
   IconDoublage,
   IconAveugle,
@@ -60,4 +61,7 @@ export const STYLE_PAR_JEU = {
   'roue-du-destin': { Icone: IconRoue, bg: 'var(--accent-yellow)', couleur: 'var(--accent-yellow)' },
   'croquis-en-direct': { Icone: IconCrayonTactile, bg: 'var(--accent-lime)', couleur: 'var(--accent-lime)' },
   'coffre-fort': { Icone: IconCadenas, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
+  'chrono-aveugle': { Icone: IconChrono, bg: 'var(--accent-magenta)', couleur: 'var(--accent-magenta)' },
+  'chaise-musicale-numerique': { Icone: IconCorde, bg: 'var(--bg-deep)', couleur: 'var(--accent-magenta)', contour: 'var(--accent-magenta)' },
+  'marche-noir': { Icone: IconCamembertVote, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
 };

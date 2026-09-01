@@ -57,6 +57,9 @@ export const FAMILLE_PAR_JEU = {
   'proces-fictif': 'manette-party',
   'emission-tele-achat': 'manette-party',
   'coffre-fort': 'manette-party',
+  'chrono-aveugle': 'manette-party',
+  'chaise-musicale-numerique': 'manette-party',
+  'marche-noir': 'manette-party',
   'croquis-en-direct': 'chrono-solo',
 };
 
