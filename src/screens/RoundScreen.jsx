@@ -48,6 +48,7 @@ import EspionParmiNous from '../games/EspionParmiNous.jsx';
 import LaRoueDuDestin from '../games/LaRoueDuDestin.jsx';
 import CroquisEnDirect from '../games/CroquisEnDirect.jsx';
 import CoffreFort from '../games/CoffreFort.jsx';
+import BraqueMoi from '../games/BraqueMoi.jsx';
 import ChronoAveugle from '../games/ChronoAveugle.jsx';
 import DessineEtDevine from '../games/DessineEtDevine.jsx';
 import ChaudFroid from '../games/ChaudFroid.jsx';
@@ -91,6 +92,7 @@ const COMPOSANTS_PAR_JEU = {
   'roue-du-destin': LaRoueDuDestin,
   'croquis-en-direct': CroquisEnDirect,
   'coffre-fort': CoffreFort,
+  'braque-moi': BraqueMoi,
   'chrono-aveugle': ChronoAveugle,
   'dessine-et-devine': DessineEtDevine,
   'chaud-froid': ChaudFroid,

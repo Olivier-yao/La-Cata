@@ -11,6 +11,7 @@ import TeleAchatPhone from '../manette/TeleAchatPhone.jsx';
 import VoteJeuPhone from '../manette/VoteJeuPhone.jsx';
 import CoffreFortPhone from '../manette/CoffreFortPhone.jsx';
 import CourseDoigtsPhone from '../manette/CourseDoigtsPhone.jsx';
+import BraqueMoiPhone from '../manette/BraqueMoiPhone.jsx';
 
 // composantsManette.js — associe le `prim` d'un payload d'action-broadcast
 // au composant téléphone qui sait l'afficher. Un seul point d'entrée pour
@@ -31,4 +32,5 @@ export const COMPOSANTS_MANETTE_PAR_PRIM = {
   'vote-jeu': VoteJeuPhone,
   'coffre-fort': CoffreFortPhone,
   'course-doigts': CourseDoigtsPhone,
+  'braque-moi': BraqueMoiPhone,
 };

@@ -278,7 +278,15 @@ export const GAMES = [
     voteType: 'aucun',
     groupe: true,
     manette: true,
-    regles: "Un code à 4 chiffres est verrouillé dans le coffre. Chacun tente des combinaisons sur son téléphone, autant de fois qu'il veut pendant le chrono — dès qu'un chiffre est trouvé à la bonne place, il reste acquis pour tout le monde. Le coffre s'ouvre quand les 4 chiffres sont trouvés.",
+    regles: "Un code à 4, 6 ou 8 chiffres est verrouillé dans le coffre. Chacun tente des combinaisons sur son téléphone, autant de fois qu'il veut, sans limite de temps — dès qu'un chiffre est trouvé à la bonne place, il reste acquis pour tout le monde. Premier coffre entièrement ouvert, la manche s'arrête.",
+  },
+  {
+    id: 'braque-moi',
+    nom: 'Braque-moi',
+    voteType: 'aucun',
+    groupe: true,
+    manette: true,
+    regles: "Chacun fixe en secret son propre code à 6 chiffres, puis choisit qui il veut braquer parmi les autres. Une fois tout le monde prêt, chacun tente librement des combinaisons contre le code de sa cible, sans limite de temps — premier qui craque le code de sa cible gagne le braquage et arrête la manche pour tout le monde.",
   },
   {
     id: 'chrono-aveugle',

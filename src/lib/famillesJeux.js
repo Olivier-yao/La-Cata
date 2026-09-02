@@ -56,6 +56,7 @@ export const FAMILLE_PAR_JEU = {
   'proces-fictif': 'manette-party',
   'emission-tele-achat': 'manette-party',
   'coffre-fort': 'manette-party',
+  'braque-moi': 'manette-party',
   'chrono-aveugle': 'manette-party',
   'dessine-et-devine': 'manette-party',
   'chaud-froid': 'manette-party',

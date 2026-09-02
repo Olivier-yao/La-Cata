@@ -60,6 +60,7 @@ export const STYLE_PAR_JEU = {
   'roue-du-destin': { Icone: IconRoue, bg: 'var(--accent-yellow)', couleur: 'var(--accent-yellow)' },
   'croquis-en-direct': { Icone: IconCrayonTactile, bg: 'var(--accent-lime)', couleur: 'var(--accent-lime)' },
   'coffre-fort': { Icone: IconCadenas, bg: 'var(--bg-deep)', couleur: 'var(--accent-violet)', contour: 'var(--accent-violet)' },
+  'braque-moi': { Icone: IconMasque, bg: 'var(--bg-deep)', couleur: 'var(--accent-magenta)', contour: 'var(--accent-magenta)' },
   'chrono-aveugle': { Icone: IconChrono, bg: 'var(--accent-magenta)', couleur: 'var(--accent-magenta)' },
   'dessine-et-devine': { Icone: IconCrayonTactile, bg: 'var(--accent-cyan)', couleur: 'var(--accent-cyan)' },
   'chaud-froid': { Icone: IconCalcul, bg: 'var(--bg-deep)', couleur: 'var(--accent-cyan)', contour: 'var(--accent-cyan)' },

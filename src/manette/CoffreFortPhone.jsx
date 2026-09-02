@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const TOUCHES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '←', '0', 'VALIDER'];
+const TOUCHES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '←', '0', 'FINI'];
 const COULEUR_INDICE = { exact: 'var(--accent-lime)', present: 'var(--accent-yellow)', absent: 'var(--bg-deep)' };
 
 // CoffreFortPhone — chacun propose librement des combinaisons à 4
@@ -37,7 +37,7 @@ export default function CoffreFortPhone({ payload, onAction }) {
 
   const taper = (t) => {
     if (etat !== 'ouvert') return;
-    if (t === 'VALIDER') {
+    if (t === 'FINI') {
       if (saisie.length !== (payload?.longueur || 4)) return;
       seqRef.current += 1;
       onAction({ prim: 'coffre-fort', guess: saisie.split('').map(Number), seq: seqRef.current, id: idRef.current });
@@ -94,8 +94,8 @@ export default function CoffreFortPhone({ payload, onAction }) {
             className="btn"
             style={{
               padding: '16px 0', fontSize: 16, touchAction: 'manipulation',
-              background: t === 'VALIDER' ? 'var(--accent-lime)' : 'var(--bg-panel-raised)',
-              color: t === 'VALIDER' ? 'var(--outline)' : 'var(--text-primary)',
+              background: t === 'FINI' ? 'var(--accent-lime)' : 'var(--bg-panel-raised)',
+              color: t === 'FINI' ? 'var(--outline)' : 'var(--text-primary)',
               border: '3px solid var(--outline)',
             }}
           >
